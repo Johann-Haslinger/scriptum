@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import BlockEditor from "@/components/BlockEditor";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function EditorPage({ params }: { params: { pageIds: string[] } }) {
-  const pagePath = params.pageIds || [];
+  const pagePath = params.pageIds;
   const router = useRouter();
   const [stack, setStack] = useState<string[]>(pagePath);
 

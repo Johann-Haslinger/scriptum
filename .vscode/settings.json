@@ -1,0 +1,52 @@
+{
+  "todohighlight.keywords": [
+    {
+      "text": "hint:",
+      "color": "white",
+      "backgroundColor": "transparent",
+      "overviewRulerColor": "#999"
+    },
+    {
+      "text": "performance:",
+      "color": "rgb(122, 55, 3)",
+      "backgroundColor": "rgb(255, 149, 73)"
+    },
+    {
+      "text": "debug:",
+      "color": "yellow",
+      "backgroundColor": "transparent",
+      "border": "none"
+    },
+    {
+      "text": "obsolete:",
+      "color": "orange",
+      "backgroundColor": "transparent",
+      "border": "1px solid orange"
+    },
+    {
+      "text": "bug:",
+      "color": "red",
+      "border": "1px solid red",
+      "backgroundColor": "rgba(203, 83, 83, .2)",
+      "overviewRulerColor": "#f07"
+    },
+    {
+      "text": "TODO:",
+      "color": "red",
+      "border": "1px solid red",
+      "backgroundColor": "rgba(0,0,0,.2)",
+      "overviewRulerColor": "#f07"
+    }
+  ],
+
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "cSpell.words": ["langchain", "OPENAI", "Sankey", "storyboarding", "supabase", "Webrtc", "ydoc"],
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false
+}
