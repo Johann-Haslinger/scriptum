@@ -1,9 +1,10 @@
+import { TextBlock } from "@/types";
 import BlockWrapper from "./BlockWrapper";
 
-const TextBlock = ({ block }: { block: TextBlock }) => {
+const TextBlockComponent = ({ block }: { block: TextBlock }) => {
   const { content } = block;
 
   return <BlockWrapper block={block}>{content}</BlockWrapper>;
 };
 
-export default TextBlock;
+export default TextBlockComponent;

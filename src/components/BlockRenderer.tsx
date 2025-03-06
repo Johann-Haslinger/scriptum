@@ -1,15 +1,16 @@
 import { useBlockStore } from "../store/blockStore";
-import TextBlock from "./blocks/TextBlock";
+import { BlockType } from "../types";
+import TextBlockComponent from "./blocks/TextBlock";
 
-const BlockRenderer = ({ editorId }: { editorId: string }) => {
+const BlockRenderer = ({}: { editorId: string }) => {
   const { blocks } = useBlockStore();
 
   return (
     <div>
       {blocks.map((block) => {
         switch (block.type) {
-          case "text":
-            <TextBlock key={block.id} block={block} />;
+          case BlockType.TEXT:
+            return <TextBlockComponent key={block.id} block={block} />;
           default:
             return null;
         }

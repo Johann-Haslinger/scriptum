@@ -9,15 +9,15 @@ export default function EditorPage({ params }: { params: { pageIds: string[] } }
   const router = useRouter();
   const [stack, setStack] = useState<string[]>(pagePath);
 
-  // Aktualisiere den Stack, wenn sich die URL ändert
   useEffect(() => {
     setStack(pagePath);
   }, [pagePath]);
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-gray-100">
+      hallo
       <AnimatePresence>
-        {stack.map((pageId, index) => (
+        {stack.map((pageId) => (
           <motion.div
             key={pageId}
             className="absolute top-0 left-0 w-full h-full"

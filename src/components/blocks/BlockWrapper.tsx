@@ -1,3 +1,4 @@
+import { Block } from "@/types";
 import { PropsWithChildren } from "react";
 
 interface BlockWrapperProps extends PropsWithChildren {

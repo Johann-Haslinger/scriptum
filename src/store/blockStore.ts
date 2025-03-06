@@ -1,3 +1,4 @@
+import { Block, BlockType } from "@/types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { WebrtcProvider } from "y-webrtc";
 import * as Y from "yjs";
@@ -25,7 +26,7 @@ export const useBlockStore = create<BlockStore>((set, get) => {
   const initialBlocks: Block[] = [
     {
       id: crypto.randomUUID(),
-      type: BlockType.Text,
+      type: BlockType.TEXT,
       content: "Hello, World!",
     },
   ];
@@ -42,7 +43,7 @@ export const useBlockStore = create<BlockStore>((set, get) => {
     addBlock: (block) => {
       yArray.push([block]);
     },
-    updateBlock: (id, content) => {
+    updateBlock: (id) => {
       const blocks = yArray.toArray();
       const index = blocks.findIndex((b) => b.id === id);
       if (index !== -1) {
