@@ -4,18 +4,19 @@ import { WebrtcProvider } from "y-webrtc";
 import * as Y from "yjs";
 import { create } from "zustand";
 
-type BlockStore = {
+type BlocksStore = {
   blocks: Block[];
   ydoc: Y.Doc;
   provider: WebrtcProvider | null;
   setProvider: (room: string) => void;
   addBlock: (block: Block) => void;
-  updateBlock: (id: string, content: string) => void;
+  updateBlock: (block: Block) => void;
   deleteBlock: (id: string) => void;
   loadBlocksFromSupabase: (supabase: SupabaseClient) => Promise<void>;
   saveBlocksToSupabase: (supabase: SupabaseClient) => Promise<void>;
 };
-export const useBlockStore = create<BlockStore>((set, get) => {
+
+export const useBlocksStore = create<BlocksStore>((set, get) => {
   const ydoc = new Y.Doc();
   const yArray = ydoc.getArray<Block>("blocks");
 
@@ -29,6 +30,18 @@ export const useBlockStore = create<BlockStore>((set, get) => {
       type: BlockType.TEXT,
       content: "Hello, World!",
     },
+    {
+      id: crypto.randomUUID(),
+      type: BlockType.TEXT,
+      content:
+        "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+    },
+    {
+      id: crypto.randomUUID(),
+      type: BlockType.TEXT,
+      content:
+        "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+    },
   ];
   yArray.push(initialBlocks);
 
@@ -40,14 +53,14 @@ export const useBlockStore = create<BlockStore>((set, get) => {
       const provider = new WebrtcProvider(room, ydoc);
       set({ provider });
     },
-    addBlock: (block) => {
+    addBlock: (block: Block) => {
       yArray.push([block]);
     },
-    updateBlock: (id) => {
+    updateBlock: (block: Block) => {
       const blocks = yArray.toArray();
-      const index = blocks.findIndex((b) => b.id === id);
+      const index = blocks.findIndex((b) => b.id === block.id);
       if (index !== -1) {
-        const block = blocks[index];
+        console.log("updateBlock", block);
         yArray.delete(index, 1);
         yArray.insert(index, [block]);
       }

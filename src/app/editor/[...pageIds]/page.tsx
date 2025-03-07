@@ -15,7 +15,6 @@ export default function EditorPage({ params }: { params: { pageIds: string[] } }
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-gray-100">
-      hallo
       <AnimatePresence>
         {stack.map((pageId) => (
           <motion.div

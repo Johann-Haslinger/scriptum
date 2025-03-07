@@ -1,9 +1,9 @@
-import { useBlockStore } from "../store/blockStore";
+import { useBlocksStore } from "../store/blocksStore";
 import { BlockType } from "../types";
 import TextBlockComponent from "./blocks/TextBlock";
 
 const BlockRenderer = ({}: { editorId: string }) => {
-  const { blocks } = useBlockStore();
+  const { blocks } = useBlocksStore();
 
   return (
     <div>
