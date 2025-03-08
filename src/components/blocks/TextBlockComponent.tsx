@@ -1,5 +1,5 @@
+import { useBlocksStore } from "@/store";
 import { TextBlock } from "@/types";
-import { useBlocksStore } from "../../store/blocksStore";
 import BlockWrapper from "./BlockWrapper";
 
 const TextBlockComponent = ({ block }: { block: TextBlock }) => {
@@ -9,7 +9,7 @@ const TextBlockComponent = ({ block }: { block: TextBlock }) => {
   return (
     <BlockWrapper block={block}>
       <textarea
-        className="w-full"
+        className="w-full outline-none"
         onChange={(e) => updateBlock({ ...block, content: e.target.value })}
         value={content}
       />

@@ -1,6 +1,6 @@
-import { useBlocksStore } from "../store/blocksStore";
-import { BlockType } from "../types";
-import TextBlockComponent from "./blocks/TextBlock";
+import { useBlocksStore } from "@/store";
+import { BlockType } from "../types/enums";
+import { TextBlockComponent } from "./blocks";
 
 const BlockRenderer = ({}: { editorId: string }) => {
   const { blocks } = useBlocksStore();

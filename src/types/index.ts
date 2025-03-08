@@ -1,2 +1,2 @@
 export * from "./blocks";
-export * from "./blockType";
+export * from "./enums";
