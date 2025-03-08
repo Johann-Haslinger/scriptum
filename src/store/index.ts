@@ -1,2 +1,2 @@
 export * from "./blocksStore";
-export * from "./useBlocksUIStore";
+export * from "./blocksUIStore";

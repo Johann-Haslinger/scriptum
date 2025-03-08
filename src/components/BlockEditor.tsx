@@ -1,7 +1,7 @@
 import { useBlockEditorState, useDisableZoomAndScrollOnTouch } from "@/hooks";
 import { PropsWithChildren, useRef } from "react";
 import { BlockEditorState } from "../types";
-import BlockRenderer from "./BlockRenderer";
+import BlocksRenderer from "./BlocksRenderer";
 import { RubberBandSelector } from "./RubberBandSelector";
 
 export default function BlockEditor({
@@ -23,7 +23,7 @@ export default function BlockEditor({
         <p className="fixed right-0 top-0 p-4">{blockEditorState}</p>
         <BlockAreaWrapper>
           <p className="text-3xl font-extrabold mb-2 px-6">Block Editor</p>
-          <BlockRenderer blocksAreaRef={blocksAreaRef} editorId={pageId} />
+          <BlocksRenderer blocksAreaRef={blocksAreaRef} editorId={pageId} />
         </BlockAreaWrapper>
       </RubberBandSelector>
     </div>

@@ -8,7 +8,7 @@ interface BlockRendererProps {
   blocksAreaRef: React.RefObject<HTMLDivElement | null>;
 }
 
-const BlockRenderer = ({ blocksAreaRef }: BlockRendererProps) => {
+const BlocksRenderer = ({ blocksAreaRef }: BlockRendererProps) => {
   const { blocks } = useBlocksStore();
 
   return (
@@ -29,4 +29,4 @@ const BlockRenderer = ({ blocksAreaRef }: BlockRendererProps) => {
   );
 };
 
-export default BlockRenderer;
+export default BlocksRenderer;

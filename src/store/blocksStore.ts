@@ -29,18 +29,21 @@ export const useBlocksStore = create<BlocksStore>((set, get) => {
       id: "1",
       type: BlockType.TEXT,
       content: "Hello, World!",
+      order: 0,
     },
     {
       id: "2",
       type: BlockType.TEXT,
       content:
         "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+      order: 1,
     },
     {
       id: "3",
       type: BlockType.TEXT,
       content:
         "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+      order: 2,
     },
   ];
   yArray.push(initialBlocks);

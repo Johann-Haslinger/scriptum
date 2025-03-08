@@ -3,6 +3,7 @@ import { BlockType } from "./enums/blockType";
 interface BlockBase {
   id: string;
   type: BlockType;
+  order: number;
 }
 
 interface EditableTextBlock extends BlockBase {
