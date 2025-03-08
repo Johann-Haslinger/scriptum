@@ -1,12 +1,13 @@
 import { useBlocksStore } from "@/store";
-import { BlockType } from "../types/enums";
+import { BlockType } from "@/types";
 import { TextBlockComponent } from "./blocks";
+import OutsideClickWrapper from "./OutsideClickWrapper";
 
 const BlockRenderer = ({}: { editorId: string }) => {
   const { blocks } = useBlocksStore();
 
   return (
-    <div>
+    <OutsideClickWrapper>
       {blocks.map((block) => {
         switch (block.type) {
           case BlockType.TEXT:
@@ -15,7 +16,7 @@ const BlockRenderer = ({}: { editorId: string }) => {
             return null;
         }
       })}
-    </div>
+    </OutsideClickWrapper>
   );
 };
 

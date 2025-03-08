@@ -1,9 +1,7 @@
-import { useBlockEditorState } from "@/hooks";
+import { useBlockEditorState, useOutsideClick } from "@/hooks";
 import { useBlocksUIStore } from "@/store";
-import { Block } from "@/types";
+import { Block, BlockEditorState } from "@/types";
 import { PropsWithChildren, useRef, useState } from "react";
-import { BlockEditorState } from "../../types/enums";
-import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 interface BlockWrapperProps extends PropsWithChildren {
   block: Block;
@@ -12,12 +10,19 @@ interface BlockWrapperProps extends PropsWithChildren {
 const BlockWrapper = ({ children, block }: BlockWrapperProps) => {
   const { id } = block;
   const { selectedBlocks } = useBlocksUIStore();
+  const blockEditorState = useBlockEditorState();
   const isSelected = selectedBlocks[id];
 
   return (
-    <div className={`${isSelected ? "bg-gray-200" : ""}`}>
-      <Selectable blockId={id}>{children}</Selectable>
-    </div>
+    <Selectable blockId={id}>
+      <div
+        className={`${isSelected ? "bg-gray-800" : ""} ${
+          blockEditorState == BlockEditorState.SELECTING && "select-none"
+        }`}
+      >
+        {children}
+      </div>
+    </Selectable>
   );
 };
 
@@ -37,13 +42,7 @@ const Selectable = ({ children, blockId }: SelectableProps) => {
   const [translateX, setTranslateX] = useState<number>(0);
   const [isSwiping, setIsSwiping] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   if (!isEditing) {
-  //     blockEntity.addTag(AdditionalTag.CONTENT_EDITABLE);
-  //   }
-  // }, [isEditing]);
-
-  useOutsideClick(textBlockRef, () => setTranslateX(0), isSwiping);
+  useOutsideClick(textBlockRef, () => setTranslateX(0));
 
   const toggleIsBlockPressed = () => {
     if (blockeditorState !== BlockEditorState.WRITING) {
@@ -56,7 +55,7 @@ const Selectable = ({ children, blockId }: SelectableProps) => {
   };
 
   const handleMouseDown = () => {
-    if (false) {
+    if (blockeditorState === BlockEditorState.SELECTING) {
       toggleIsBlockPressed();
     } else {
       timeoutRef.current = setTimeout(() => {
