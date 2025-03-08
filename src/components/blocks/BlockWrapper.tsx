@@ -31,7 +31,6 @@ export default BlockWrapper;
 interface SelectableProps extends PropsWithChildren {
   blockId: string;
 }
-
 const Selectable = ({ children, blockId }: SelectableProps) => {
   const { selectedBlocks, setSelected } = useBlocksUIStore();
   const isPressed = selectedBlocks[blockId];
@@ -96,9 +95,10 @@ const Selectable = ({ children, blockId }: SelectableProps) => {
     if (startX !== null) {
       const touch = event.touches[0];
       const deltaX = touch.clientX - startX;
-      setTranslateX(deltaX);
+      const adjustedDeltaX = deltaX / (1 + Math.abs(deltaX) / 100);
+      setTranslateX(adjustedDeltaX);
 
-      if (deltaX > 50 || deltaX < -50) {
+      if (adjustedDeltaX > 50 || adjustedDeltaX < -50) {
         if (!isSwiping) {
           toggleIsBlockPressed();
         }

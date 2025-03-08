@@ -1,3 +1,4 @@
+"use client";
 import { RefObject, useEffect } from "react";
 
 export const useOutsideClick = (ref: RefObject<HTMLElement | null>, callback: () => void, isActive: boolean = true) => {

@@ -1,5 +1,6 @@
-import { useBlockEditorState } from "@/hooks";
-import { useRef } from "react";
+import { useBlockEditorState, useDisableZoomAndScrollOnTouch } from "@/hooks";
+import { PropsWithChildren, useRef } from "react";
+import { BlockEditorState } from "../types";
 import BlockRenderer from "./BlockRenderer";
 import { RubberBandSelector } from "./RubberBandSelector";
 
@@ -14,15 +15,25 @@ export default function BlockEditor({
 
   const blocksAreaRef = useRef<HTMLDivElement | null>(null);
 
+  useDisableZoomAndScrollOnTouch();
+
   return (
-    <div>
+    <div className={`${blockEditorState == BlockEditorState.SELECTING && "select-none"}`}>
       <RubberBandSelector blocksAreaRef={blocksAreaRef}>
-        <div className="flex flex-col w-full h-full p-4 xl:pt-32 text-black dark:text-white xl:px-60">
-          <p className="fixed right-0 top-0 p-4">{blockEditorState}</p>
-          <p className="text-3xl font-bold mb-2 px-6">Block Editor</p>
+        <p className="fixed right-0 top-0 p-4">{blockEditorState}</p>
+        <BlockAreaWrapper>
+          <p className="text-3xl font-extrabold mb-2 px-6">Block Editor</p>
           <BlockRenderer blocksAreaRef={blocksAreaRef} editorId={pageId} />
-        </div>
+        </BlockAreaWrapper>
       </RubberBandSelector>
     </div>
   );
 }
+
+const BlockAreaWrapper = ({ children }: PropsWithChildren) => {
+  return (
+    <div className="flex justify-center h-screen">
+      <div className="w-full pt-16 lg:pt-24 xl:pt-32 2xl:pt-40 lg:w-[60rem] h-full">{children}</div>
+    </div>
+  );
+};
