@@ -1,5 +1,7 @@
-import { useBlockEditorState } from "../hooks";
+import { useBlockEditorState } from "@/hooks";
+import { useRef } from "react";
 import BlockRenderer from "./BlockRenderer";
+import { RubberBandSelector } from "./RubberBandSelector";
 
 export default function BlockEditor({
   pageId,
@@ -10,11 +12,17 @@ export default function BlockEditor({
 }) {
   const blockEditorState = useBlockEditorState();
 
+  const blocksAreaRef = useRef<HTMLDivElement | null>(null);
+
   return (
-    <div className="flex flex-col w-full h-full p-4 xl:py-20 text-black dark:text-white bg-white dark:bg-black xl:px-60">
-      <p className="fixed right-0 top-0 p-4">{blockEditorState}</p>
-      <p className="text-2xl font-semibold my-4">Block Editor</p>
-      <BlockRenderer editorId={pageId} />
+    <div>
+      <RubberBandSelector blocksAreaRef={blocksAreaRef}>
+        <div className="flex flex-col w-full h-full p-4 xl:pt-32 text-black dark:text-white xl:px-60">
+          <p className="fixed right-0 top-0 p-4">{blockEditorState}</p>
+          <p className="text-3xl font-bold mb-2 px-6">Block Editor</p>
+          <BlockRenderer blocksAreaRef={blocksAreaRef} editorId={pageId} />
+        </div>
+      </RubberBandSelector>
     </div>
   );
 }

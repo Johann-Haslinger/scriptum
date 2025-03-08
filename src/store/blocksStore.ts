@@ -26,18 +26,18 @@ export const useBlocksStore = create<BlocksStore>((set, get) => {
 
   const initialBlocks: Block[] = [
     {
-      id: crypto.randomUUID(),
+      id: "1",
       type: BlockType.TEXT,
       content: "Hello, World!",
     },
     {
-      id: crypto.randomUUID(),
+      id: "2",
       type: BlockType.TEXT,
       content:
         "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
     },
     {
-      id: crypto.randomUUID(),
+      id: "3",
       type: BlockType.TEXT,
       content:
         "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",

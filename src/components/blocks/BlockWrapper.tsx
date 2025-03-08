@@ -16,9 +16,9 @@ const BlockWrapper = ({ children, block }: BlockWrapperProps) => {
   return (
     <Selectable blockId={id}>
       <div
-        className={`${isSelected ? "bg-gray-800" : ""} ${
-          blockEditorState == BlockEditorState.SELECTING && "select-none"
-        }`}
+        data-block-id={id}
+        className={` block px-2 py-1 rounded-lg transition-colors
+          ${isSelected ? "bg-blue-400/20" : ""} ${blockEditorState == BlockEditorState.SELECTING && "select-none"}`}
       >
         {children}
       </div>
@@ -46,6 +46,11 @@ const Selectable = ({ children, blockId }: SelectableProps) => {
 
   const toggleIsBlockPressed = () => {
     if (blockeditorState !== BlockEditorState.WRITING) {
+      const selection = window.getSelection();
+      if (selection && !selection.isCollapsed) {
+        return;
+      }
+
       if (!isPressed) {
         setSelected(blockId, true);
       } else {
@@ -74,12 +79,7 @@ const Selectable = ({ children, blockId }: SelectableProps) => {
     const touch = event.touches[0];
     setStartX(touch.clientX);
     timeoutRef.current = setTimeout(() => {
-      if (!true) {
-        toggleIsBlockPressed();
-      }
-      if ("vibrate" in navigator) {
-        navigator.vibrate(50);
-      }
+      toggleIsBlockPressed();
     }, 500);
   };
 

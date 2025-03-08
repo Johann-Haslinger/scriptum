@@ -1,6 +1,6 @@
 import { useOutsideClick } from "@/hooks";
+import { useBlocksUIStore } from "@/store";
 import { PropsWithChildren, useRef } from "react";
-import { useBlocksUIStore } from "../store";
 
 const OutsideClickWrapper = ({ children }: PropsWithChildren) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
