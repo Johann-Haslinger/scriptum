@@ -1,8 +1,8 @@
 import { closestCenter, DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import { useBlocksStore, useBlocksUIStore } from "../store";
-import BlockComponentMatcher from "./blocks/BlockComponentMatcher";
 import { Block } from "../types";
+import BlockComponentMatcher from "./blocks/BlockComponentMatcher";
 
 const DragAndDropWrapper = ({ children }: { children: React.ReactNode }) => {
   const { blocks, updateBlock } = useBlocksStore();
@@ -41,11 +41,14 @@ const DragAndDropWrapper = ({ children }: { children: React.ReactNode }) => {
       const sortedBlocks = blocks.sort((a, b) => a.order - b.order);
       const lower = sortedBlocks[dropIndex - 1]?.order ?? 0;
       const higher = sortedBlocks[dropIndex]?.order ?? sortedBlocks[blocks.length - 1].order + 100;
-      const newOrder = (lower + higher) / 2;
+      const distance = (higher - lower) / (Object.keys(draggingBlocks).length + 1);
 
+      let currentOrder = lower + distance;
       const updatedBlocks = sortedBlocks.map((b) => {
         if (draggingBlocks[b.id]) {
-          return { ...b, order: newOrder };
+          const updatedBlock = { ...b, order: currentOrder };
+          currentOrder += distance;
+          return updatedBlock;
         }
         return b;
       });
