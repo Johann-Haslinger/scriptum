@@ -1,32 +1,28 @@
 import { useBlockEditorState, useOutsideClick } from "@/hooks";
 import { useBlocksUIStore } from "@/store";
 import { Block, BlockEditorState } from "@/types";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSSProperties, PropsWithChildren, useRef, useState } from "react";
+import { PropsWithChildren, useRef, useState } from "react";
 
 interface BlockWrapperProps extends PropsWithChildren {
   block: Block;
-  isDropTarget: boolean;
 }
 
-const BlockWrapper = ({ children, block, isDropTarget }: BlockWrapperProps) => {
+const BlockWrapper = ({ children, block }: BlockWrapperProps) => {
   const { id } = block;
   const { selectedBlocks, draggingBlocks } = useBlocksUIStore();
   const blockEditorState = useBlockEditorState();
   const isSelected = selectedBlocks[id] || draggingBlocks[id];
 
   return (
-    <Draggable isDropTarget={isDropTarget} blockId={id}>
-      <Selectable blockId={id}>
-        <div
-          data-block-id={id}
-          className={` block px-2 py-1 rounded-lg transition-colors
-          ${isSelected ? "bg-blue-400/20" : ""} ${blockEditorState == BlockEditorState.SELECTING && "select-none"}`}
-        >
-          {children}
-        </div>
-      </Selectable>
-    </Draggable>
+    <Selectable blockId={id}>
+      <div
+        data-block-id={id}
+        className={` block px-2 py-1 rounded-lg transition-colors
+          ${isSelected ? "bg-blue-400/20 " : ""} ${blockEditorState == BlockEditorState.SELECTING && "select-none"}`}
+      >
+        {children}
+      </div>
+    </Selectable>
   );
 };
 
@@ -128,51 +124,6 @@ const Selectable = ({ children, blockId }: SelectableProps) => {
       style={transitionStyle}
     >
       {children}
-    </div>
-  );
-};
-
-interface DraggableProps extends PropsWithChildren {
-  blockId: string;
-  isDropTarget: boolean;
-}
-const Draggable = ({ children, blockId, isDropTarget }: DraggableProps) => {
-  const { attributes, listeners, setNodeRef, transition } = useSortable({ id: blockId });
-  const isDragging = useBlocksUIStore((state) => state.draggingBlocks[blockId]);
-
-  const style: CSSProperties = {
-    transition,
-    opacity: isDragging ? 0.3 : 1,
-  };
-
-  return (
-    <div className="w-full">
-      {isDropTarget && !isDragging && (
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            top: "-2px",
-            height: "2px",
-            background: "blue",
-          }}
-        />
-      )}
-      <div className="flex w-full">
-        <div>
-          <div
-            className="bg-white/10 cursor-grab h-10 w-6 rounded-lg"
-            id={blockId}
-            data-block-id={blockId}
-            ref={setNodeRef}
-            style={style}
-            {...attributes}
-            {...listeners}
-          />
-        </div>
-        {children}
-      </div>
     </div>
   );
 };

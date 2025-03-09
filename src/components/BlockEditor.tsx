@@ -22,7 +22,7 @@ export default function BlockEditor({
       <RubberBandSelector blocksAreaRef={blocksAreaRef}>
         <p className="fixed right-0 top-0 p-4">{blockEditorState}</p>
         <BlockAreaWrapper>
-          <p className="text-3xl font-extrabold mb-2 px-6">Block Editor</p>
+          <p className="text-3xl font-extrabold mb-6 px-8">Block Editor</p>
           <BlocksRenderer blocksAreaRef={blocksAreaRef} editorId={pageId} />
         </BlockAreaWrapper>
       </RubberBandSelector>

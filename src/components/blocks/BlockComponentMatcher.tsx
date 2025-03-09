@@ -1,18 +1,14 @@
 import { TextBlockComponent } from ".";
-import { useBlocksUIStore } from "../../store";
 import { Block, BlockType } from "../../types";
 
 interface BlockComponentMatcherProps {
   block: Block;
-  idx: number;
 }
 
-const BlockComponentMatcher = ({ block, idx }: BlockComponentMatcherProps) => {
-  const dropIndex = useBlocksUIStore((state) => state.dropIndex);
-
+const BlockComponentMatcher = ({ block }: BlockComponentMatcherProps) => {
   switch (block.type) {
     case BlockType.TEXT:
-      return <TextBlockComponent isDropTarget={idx == dropIndex} key={idx} block={block} />;
+      return <TextBlockComponent block={block} />;
     default:
       return null;
   }

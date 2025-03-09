@@ -7,8 +7,8 @@ type BlocksUIStore = {
   setDragging: (blockId: string, value: boolean) => void;
   focusedBlockId: string;
   setFocused: (blockId: string) => void;
-  dropIndex: number | null;
-  setDropIndex: (index: number | null) => void;
+  dropIndex: number;
+  setDropIndex: (index: number) => void;
 };
 
 export const useBlocksUIStore = create<BlocksUIStore>((set) => {
@@ -36,7 +36,7 @@ export const useBlocksUIStore = create<BlocksUIStore>((set) => {
         return { focusedBlockId };
       });
     },
-    dropIndex: null,
+    dropIndex: -1,
     setDropIndex: (index) => {
       set(() => {
         const dropIndex = index;

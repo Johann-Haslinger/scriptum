@@ -25,3 +25,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   overflow: hidden;
 }
+
+::selection {
+  @apply bg-blue-400/30;
+}
