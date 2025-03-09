@@ -1,5 +1,5 @@
 import { useBlocksStore, useBlocksUIStore } from "@/store";
-import BlockComponentMatcher from "./blocks/BlockComponentMatcher";
+import BlockComponentMatcher from "./BlockComponentMatcher";
 import DragAndDropWrapper from "./DragAndDropWrapper";
 import Draggable from "./Draggable";
 import LastBlockIndicator from "./LastBlockIndicator";

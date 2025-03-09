@@ -6,5 +6,5 @@ export const useBlockEditorState = (): BlockEditorState => {
 
   const isSelectingBlocks = Object.values(selectedBlocks).some((isSelected) => isSelected === true);
 
-  return isSelectingBlocks ? BlockEditorState.SELECTING : BlockEditorState.VIEWING;
+  return isSelectingBlocks ? BlockEditorState.EDITING_BLOCKS : BlockEditorState.VIEWING;
 };

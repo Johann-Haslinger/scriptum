@@ -1,5 +1,5 @@
 export enum BlockEditorState {
-  SELECTING = "selecting",
+  EDITING_BLOCKS = "editing-blocks",
   WRITING = "writing",
   VIEWING = "viewing",
 }

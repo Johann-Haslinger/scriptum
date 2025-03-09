@@ -1,7 +1,9 @@
 import { useBlockEditorState, useDisableZoomAndScrollOnTouch } from "@/hooks";
-import { PropsWithChildren, useRef } from "react";
+import { useRef } from "react";
 import { BlockEditorState } from "../types";
-import BlocksRenderer from "./BlocksRenderer";
+import { BlocksRenderer } from "./blocks-renderer";
+import { EditBlocksMenu } from "./edit-blocks-menu";
+import BlockAreaWrapper from "./edit-blocks-menu/BlockAreaWrapper";
 import { RubberBandSelector } from "./RubberBandSelector";
 
 export default function BlockEditor({
@@ -18,22 +20,15 @@ export default function BlockEditor({
   useDisableZoomAndScrollOnTouch();
 
   return (
-    <div className={`${blockEditorState == BlockEditorState.SELECTING && "select-none"}`}>
+    <div className={`${blockEditorState == BlockEditorState.EDITING_BLOCKS && "select-none"}`}>
       <RubberBandSelector blocksAreaRef={blocksAreaRef}>
-        <p className="fixed right-0 top-0 p-4">{blockEditorState}</p>
         <BlockAreaWrapper>
           <p className="text-3xl font-extrabold mb-6 px-8">Block Editor</p>
           <BlocksRenderer blocksAreaRef={blocksAreaRef} editorId={pageId} />
         </BlockAreaWrapper>
       </RubberBandSelector>
+
+      <EditBlocksMenu />
     </div>
   );
 }
-
-const BlockAreaWrapper = ({ children }: PropsWithChildren) => {
-  return (
-    <div className="flex justify-center h-screen">
-      <div className="w-full pt-16 lg:pt-24 xl:pt-32 2xl:pt-40 lg:w-[60rem] h-full">{children}</div>
-    </div>
-  );
-};

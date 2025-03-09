@@ -1,8 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { GripVertical } from "lucide-react";
 import { PropsWithChildren, useState } from "react";
-import { useBlocksUIStore } from "../store";
-import { Block } from "../types";
+import { useBlocksUIStore } from "../../store";
+import { Block } from "../../types";
 
 interface DraggableProps extends PropsWithChildren {
   children: React.ReactNode;

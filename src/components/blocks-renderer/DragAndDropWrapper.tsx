@@ -1,8 +1,9 @@
 import { closestCenter, DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { useBlocksStore, useBlocksUIStore } from "../store";
-import { Block } from "../types";
-import BlockComponentMatcher from "./blocks/BlockComponentMatcher";
+import { GripVertical } from "lucide-react";
+import { useBlocksStore, useBlocksUIStore } from "../../store";
+import { Block } from "../../types";
+import BlockComponentMatcher from "./BlockComponentMatcher";
 
 const DragAndDropWrapper = ({ children }: { children: React.ReactNode }) => {
   const { blocks, updateBlock } = useBlocksStore();
@@ -86,7 +87,10 @@ export default DragAndDropWrapper;
 
 const GhostBlock = ({ block }: { block: Block }) => {
   return (
-    <div className="pl-6">
+    <div className="pl-6 cursor-grabbing">
+      <div className={`pt-1 absolute left-0 opacity-0 hover:opacity-70 w-6`}>
+        <GripVertical />
+      </div>
       <BlockComponentMatcher block={block} />
     </div>
   );
