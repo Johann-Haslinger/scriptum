@@ -3,8 +3,12 @@ import { create } from "zustand";
 type BlocksUIStore = {
   selectedBlocks: Record<string, boolean>;
   setSelected: (blockId: string, value: boolean) => void;
+  draggingBlocks: Record<string, boolean>;
+  setDragging: (blockId: string, value: boolean) => void;
   focusedBlockId: string;
   setFocused: (blockId: string) => void;
+  dropIndex: number | null;
+  setDropIndex: (index: number | null) => void;
 };
 
 export const useBlocksUIStore = create<BlocksUIStore>((set) => {
@@ -13,8 +17,16 @@ export const useBlocksUIStore = create<BlocksUIStore>((set) => {
     setSelected: (blockId, value) => {
       set((state) => {
         const selectedBlocks = { ...state.selectedBlocks };
-        selectedBlocks[blockId] = value
+        selectedBlocks[blockId] = value;
         return { selectedBlocks: selectedBlocks };
+      });
+    },
+    draggingBlocks: {},
+    setDragging: (blockId, value) => {
+      set((state) => {
+        const draggingBlocks = { ...state.draggingBlocks };
+        draggingBlocks[blockId] = value;
+        return { draggingBlocks };
       });
     },
     focusedBlockId: "",
@@ -22,6 +34,13 @@ export const useBlocksUIStore = create<BlocksUIStore>((set) => {
       set(() => {
         const focusedBlockId = blockId;
         return { focusedBlockId };
+      });
+    },
+    dropIndex: null,
+    setDropIndex: (index) => {
+      set(() => {
+        const dropIndex = index;
+        return { dropIndex };
       });
     },
   };

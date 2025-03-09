@@ -1,6 +1,6 @@
 import { useBlocksStore } from "@/store";
-import { BlockType } from "@/types";
-import { TextBlockComponent } from "./blocks";
+import BlockComponentMatcher from "./blocks/BlockComponentMatcher";
+import DragAndDropWrapper from "./DragAndDropWrapper";
 import OutsideClickWrapper from "./OutsideClickWrapper";
 
 interface BlockRendererProps {
@@ -15,14 +15,11 @@ const BlocksRenderer = ({ blocksAreaRef }: BlockRendererProps) => {
     <div ref={blocksAreaRef} className="p-4">
       <OutsideClickWrapper>
         <div className="space-y-0.5">
-          {blocks.map((block, idx) => {
-            switch (block.type) {
-              case BlockType.TEXT:
-                return <TextBlockComponent key={idx} block={block} />;
-              default:
-                return null;
-            }
-          })}
+          <DragAndDropWrapper>
+            {blocks.map((block, idx) => (
+              <BlockComponentMatcher key={block.id} block={block} idx={idx} />
+            ))}
+          </DragAndDropWrapper>
         </div>
       </OutsideClickWrapper>
     </div>
