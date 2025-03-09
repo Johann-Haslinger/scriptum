@@ -9,6 +9,8 @@ type BlocksUIStore = {
   setFocused: (blockId: string) => void;
   dropIndex: number;
   setDropIndex: (index: number) => void;
+  isRubberBandSelecting: boolean;
+  setIsRubberBandSelecting: (value: boolean) => void;
 };
 
 export const useBlocksUIStore = create<BlocksUIStore>((set) => {
@@ -41,6 +43,13 @@ export const useBlocksUIStore = create<BlocksUIStore>((set) => {
       set(() => {
         const dropIndex = index;
         return { dropIndex };
+      });
+    },
+    isRubberBandSelecting: false,
+    setIsRubberBandSelecting: (value) => {
+      set(() => {
+        const isRubberBandSelecting = value;
+        return { isRubberBandSelecting };
       });
     },
   };

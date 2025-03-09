@@ -1,5 +1,5 @@
-import { TextBlockComponent } from ".";
 import { Block, BlockType } from "../../types";
+import { TextBlockComponent } from "../blocks";
 
 interface BlockComponentMatcherProps {
   block: Block;

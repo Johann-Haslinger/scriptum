@@ -6,12 +6,16 @@ interface RubberBandSelectorProps extends PropsWithChildren {
 }
 
 export const RubberBandSelector = ({ children, blocksAreaRef }: RubberBandSelectorProps) => {
-  const { setSelected } = useBlocksUIStore();
+  const { setSelected, setIsRubberBandSelecting } = useBlocksUIStore();
   const [isSelecting, setIsSelecting] = useState(false);
   const [startPos, setStartPos] = useState<{ x: number; y: number } | null>(null);
   const [currentPos, setCurrentPos] = useState<{ x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const threshold = 5;
+
+  useEffect(() => {
+    setIsRubberBandSelecting(isSelecting);
+  }, [isSelecting]);
 
   useEffect(() => {
     if (isSelecting) {
