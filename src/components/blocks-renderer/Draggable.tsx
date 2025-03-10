@@ -27,7 +27,7 @@ const Draggable = ({ children, block, isDropTarget }: DraggableProps) => {
     <div
       onMouseEnter={() => setBlockHovered(true)}
       onMouseLeave={() => setBlockHovered(false)}
-      className=" w-full pl-6"
+      className="focus:outline-none w-full pl-6"
       ref={setNodeRef}
       {...attributes}
       style={style}

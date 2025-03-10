@@ -23,7 +23,7 @@ export default function BlockEditor({
     <div className={`${blockEditorState == BlockEditorState.EDITING_BLOCKS && "select-none"}`}>
       <RubberBandSelector blocksAreaRef={blocksAreaRef}>
         <BlockAreaWrapper>
-          <p className="text-3xl font-extrabold mb-6 px-8">Block Editor</p>
+          <p className="text-3xl font-semibold mb-6 px-8">Block Editor</p>
           <BlocksRenderer blocksAreaRef={blocksAreaRef} editorId={pageId} />
         </BlockAreaWrapper>
       </RubberBandSelector>

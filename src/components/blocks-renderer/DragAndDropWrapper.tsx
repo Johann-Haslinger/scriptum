@@ -24,9 +24,10 @@ const DragAndDropWrapper = ({ children }: { children: React.ReactNode }) => {
 
   function handleDragOver(event: any) {
     const { over } = event;
+    console.log("over", over);
     if (!over) return;
 
-    const overIndex = blocks.findIndex((b) => b.id === over.id);
+    const overIndex = blocks.sort((a, b) => a.order - b.order).findIndex((b) => b.id === over.id);
     if (over.id === "last") {
       setDropIndex(blocks.length);
       return;
@@ -37,6 +38,7 @@ const DragAndDropWrapper = ({ children }: { children: React.ReactNode }) => {
 
   function handleDragEnd(event: any) {
     const draggedBlock = blocks.find((b) => b.id === event.active.id);
+    console.log("dropIndex", dropIndex);
 
     if (draggedBlock?.order !== blocks[dropIndex]?.order && dropIndex !== -1) {
       const sortedBlocks = blocks.sort((a, b) => a.order - b.order);
