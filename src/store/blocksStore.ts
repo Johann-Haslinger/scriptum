@@ -27,12 +27,14 @@ export const useBlocksStore = create<BlocksStore>((set, get) => {
   const initialBlocks: Block[] = [
     {
       id: "1",
+      documentId: "1",
       type: BlockType.TEXT,
       content: "Hello, World!",
       order: 100,
     },
     {
       id: "2",
+      documentId: "1",
       type: BlockType.TEXT,
       content:
         "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
@@ -40,10 +42,19 @@ export const useBlocksStore = create<BlocksStore>((set, get) => {
     },
     {
       id: "3",
+      documentId: "1",
       type: BlockType.TEXT,
       content:
         "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
       order: 300,
+    },
+    {
+      id: "4",
+      documentId: "1",
+      type: BlockType.TEXT,
+      content:
+        "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+      order: 400,
     },
   ];
   yArray.push(initialBlocks);

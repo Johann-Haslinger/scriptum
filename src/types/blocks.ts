@@ -2,6 +2,7 @@ import { BlockType } from "./enums/blockType";
 
 interface BlockBase {
   id: string;
+  documentId: string;
   type: BlockType;
   order: number;
 }

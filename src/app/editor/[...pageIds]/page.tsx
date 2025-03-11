@@ -26,7 +26,7 @@ export default function EditorPage({ params }: { params: { pageIds: string[] } }
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
             <BlockEditor
-              pageId={pageId}
+              documentId={pageId}
               onNavigate={(newPageId) => router.push(`/editor/${[...stack, newPageId].join("/")}`)}
               onClose={() => {
                 const newStack = stack.slice(0, -1);

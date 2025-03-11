@@ -59,13 +59,17 @@ const EditOption = ({ option, focusEditOption }: { option: EditOption; focusEdit
   return (
     <motion.div
       onMouseEnter={focusEditOption}
+      initial={{
+        fontSize: "1.1rem",
+      }}
       animate={{
         outline: option.isFocused ? "2px solid" : "2px solid transparent",
         outlineColor: option.isFocused ? option.outlineColor : "rgba(0, 0, 0, 0)",
         outlineOffset: option.isFocused ? "0px" : "4px",
         outlineWidth: option.isFocused ? "2px" : "4px",
+        fontSize: option.isFocused ? "1.3rem" : "1.1rem",
       }}
-      className={`h-10 w-full text-lg rounded-lg flex items-center justify-center ${option.color}`}
+      className={`h-10 w-full rounded-lg flex items-center justify-center ${option.color}`}
       onClick={option.onClick}
     >
       {option.icon}
@@ -100,21 +104,21 @@ const useEditOptions = () => {
       icon: <IoText />,
       color: "text-green-400/60 bg-green-400/10",
       onClick: () => console.log("style"),
-      outlineColor: "rgba(5, 223, 114, 0.5)",
+      outlineColor: "rgba(5, 223, 114, 0.4)",
     },
     addContent: {
       name: "Add Content",
       icon: <IoArrowForward />,
       color: "text-yellow-400/60 bg-yellow-400/10",
       onClick: () => console.log("add content"),
-      outlineColor: "rgba(255, 204, 0, 0.5)",
+      outlineColor: "rgba(255, 204, 0, 0.4)",
     },
     delete: {
       name: "Delete",
       icon: <IoTrash />,
       color: "text-red-400/60 bg-red-400/10",
       onClick: () => console.log("delete"),
-      outlineColor: "rgba(255, 59, 48, 0.5)",
+      outlineColor: "rgba(255, 59, 48, 0.4)",
     },
   };
   const [editOptions, setEditOptions] = useState<EditOption[]>([]);
@@ -131,7 +135,7 @@ const useEditOptions = () => {
     setEditOptions(newEditOptions);
   };
 
-  useNavigateInEditOptionsListener(editOptions, setEditOptions);
+  useEditOptionNavigationByKeyPress(editOptions, setEditOptions);
 
   return { editOptions, focusEditOption };
 };
@@ -186,7 +190,7 @@ const useLeftDistance = (menuWidth: number) => {
 const useMenuHeight = () => 190;
 const useMenuWidth = () => 52;
 
-const useNavigateInEditOptionsListener = (
+const useEditOptionNavigationByKeyPress = (
   editOptions: EditOption[],
   setEditOptions: (newValue: EditOption[]) => void
 ) => {
@@ -197,11 +201,9 @@ const useNavigateInEditOptionsListener = (
       const currentIndex = editOptions.findIndex((option) => option.isFocused);
       let newIndex = currentIndex;
 
-      if (event.key === "ArrowDown" || event.key === "Tab") {
+      if (event.key === "Tab") {
         event.preventDefault();
         newIndex = (currentIndex + 1) % editOptions.length;
-      } else if (event.key === "ArrowUp") {
-        newIndex = (currentIndex - 1 + editOptions.length) % editOptions.length;
       }
 
       if (newIndex !== currentIndex) {
