@@ -6,10 +6,14 @@ const OutsideClickWrapper = ({ children }: PropsWithChildren) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { selectedBlocks, setSelected } = useBlocksUIStore();
 
-  const handleOutsideClick = () =>
-    Object.keys(selectedBlocks).forEach((blockId) => {
-      setSelected(blockId, false);
-    });
+  const handleOutsideClick = (event: Event) => {
+    if (!(event as MouseEvent).shiftKey) {
+      console.log("Outside click");
+      Object.keys(selectedBlocks).forEach((blockId) => {
+        setSelected(blockId, false);
+      });
+    }
+  };
 
   useOutsideClick(wrapperRef, handleOutsideClick);
 

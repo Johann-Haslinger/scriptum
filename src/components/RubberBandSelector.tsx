@@ -82,7 +82,7 @@ export const RubberBandSelector = ({ children, blocksAreaRef }: RubberBandSelect
             blockId
           ) {
             setSelected(blockId, true);
-          } else if (blockId) {
+          } else if (blockId && !e.shiftKey) {
             setSelected(blockId, false);
           }
         });
