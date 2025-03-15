@@ -14,6 +14,7 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
   const menuWidth = useMenuWidth();
   const topDistance = useTopDistance(menuHeight);
   const leftDistance = useLeftDistance(menuWidth);
+  const isAnEditOptionSelected = useIsAnOptionSelected();
 
   const editMenuVariants = {
     hidden: {
@@ -23,6 +24,8 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
       scale: 0.7,
       width: menuWidth,
       height: menuHeight,
+      outlineColor: "rgba(0, 0, 0, 0)",
+      backgroundColor: "rgba(0, 0, 0, 0)",
     },
     visible: {
       opacity: 1,
@@ -31,43 +34,24 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
       scale: 1,
       width: menuWidth,
       height: menuHeight,
+      outlineColor: isAnEditOptionSelected ? "rgba(0, 0, 0, 0)" : "rgba(255, 255, 255, 0.13)",
+      backgroundColor: isAnEditOptionSelected ? "rgba(0, 0, 0, 0)" : "#1f1f1fab",
     },
   };
 
   const transition = { type: "spring", duration: 0.7, bounce: 0.15 };
 
-  // useEffect(() => {
-  //   const handleKeyDown = (e: KeyboardEvent) => {
-  //     if (e.key === "Tab") {
-
   return (
     topDistance !== -1 && (
       <motion.div
         data-element-id="edit-blocks-menu"
-        className="fixed backdrop-blur-lg z-[200] outline-white/[0.15] outline dark:shadow-[0px_0px_60px_0px_rgba(255, 255, 255, 0.4)] space-y-1.5 bg-[#1f1f1fab] h-fit p-1.5 rounded-xl shadow-lg"
+        className={`fixed z-[200] space-y-1.5 h-fit p-1.5 rounded-xl`}
         variants={editMenuVariants}
         transition={transition}
         initial="hidden"
         animate="visible"
         exit="hidden"
         tabIndex={0}
-        ref={(element) => {
-          if (element) {
-            element.addEventListener("keydown", (e) => {
-              if (e.key === "Tab") {
-                e.preventDefault();
-                element.style.transition = "transform 0.3s ease";
-                element.style.transform = "scale(0.9)";
-                setTimeout(() => {
-                  element.style.transform = "scale(1.1)";
-                  setTimeout(() => {
-                    element.style.transform = "scale(1)";
-                  }, 150);
-                }, 150);
-              }
-            });
-          }
-        }}
       >
         {children}
       </motion.div>
@@ -136,13 +120,9 @@ const useLeftDistance = (menuWidth: number) => {
   return leftDistance ? leftDistance : -1;
 };
 
-const useMenuHeight = () => {
-  const isAnEditOptionSelected = useIsAnOptionSelected();
-
-  return isAnEditOptionSelected ? 200 : 190;
-};
+const useMenuHeight = () => 190;
 const useMenuWidth = () => {
   const isAnEditOptionSelected = useIsAnOptionSelected();
 
-  return isAnEditOptionSelected ? 500 : 52;
+  return isAnEditOptionSelected ? 52 : 52;
 };

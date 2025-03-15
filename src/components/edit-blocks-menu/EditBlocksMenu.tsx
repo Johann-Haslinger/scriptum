@@ -27,7 +27,7 @@ const allEditOptions: EditOption[] = [
     name: EditOptionName.ADD_CONTENT,
     icon: <IoAddCircleOutline />,
     color: "text-fuchsia-400/60 bg-fuchsia-400/10",
-    outlineColor: "rgba(88, 86, 214, 0.4)",
+    outlineColor: "rgba(221, 114, 250, 0.4)",
     order: 2,
   },
   {
@@ -57,7 +57,7 @@ const EditBlocksMenu = () => {
       {isVisible && !isRubberBandSelecting && (
         <EditMenuWrapper>
           {editOptions.map((option, index) => (
-            <EditOptionCell key={index} option={option} />
+            <EditOptionCell idx={index} key={index} option={option} />
           ))}
         </EditMenuWrapper>
       )}
@@ -73,10 +73,11 @@ const useEditOptions = () => {
   const [editOptions, setEditOptions] = useState<EditOption[]>([]);
   const { blocks } = useBlocksStore();
   const { selectedBlockIds } = useBlocksUIStore();
-  const { setCurrentEditOption } = useEditMenuUIStore();
+  const { setCurrentEditOption, focusedEditOption, setFocusedEditOption } = useEditMenuUIStore();
 
   useEffect(() => {
     setCurrentEditOption(null);
+    setFocusedEditOption(EditOptionName.AI);
   }, [blockEditorState]);
 
   const addEditOption = (option: EditOptionName) => {
@@ -109,9 +110,13 @@ const useEditOptions = () => {
     if (selectedBlocks.length === 1 && selectedBlocks[0]?.type === BlockType.TEXT) {
       removeEditOption(EditOptionName.GROUP_BLOCKS);
       addEditOption(EditOptionName.ADD_CONTENT);
+
+      if (focusedEditOption === EditOptionName.GROUP_BLOCKS) setFocusedEditOption(EditOptionName.ADD_CONTENT);
     } else if (selectedBlocks.length > 1) {
       removeEditOption(EditOptionName.ADD_CONTENT);
       addEditOption(EditOptionName.GROUP_BLOCKS);
+
+      if (focusedEditOption === EditOptionName.ADD_CONTENT) setFocusedEditOption(EditOptionName.GROUP_BLOCKS);
     } else {
       removeEditOption(EditOptionName.GROUP_BLOCKS);
       removeEditOption(EditOptionName.ADD_CONTENT);
@@ -121,7 +126,7 @@ const useEditOptions = () => {
     } else {
       addEditOption(EditOptionName.STYLE);
     }
-  }, [selectedBlockIds, blocks]);
+  }, [selectedBlockIds, blocks, focusedEditOption, setFocusedEditOption]);
 
   useEditOptionNavigationByKeyPress(editOptions);
 

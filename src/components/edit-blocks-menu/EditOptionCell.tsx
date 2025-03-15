@@ -1,19 +1,19 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect } from "react";
 import { useBlockEditorState } from "../../hooks";
 import { useEditMenuUIStore } from "../../store/editMenuUIStore";
 import { BlockEditorState, EditOption, EditOptionName } from "../../types";
 
-const EditOptionCell = ({ option }: { option: EditOption }) => {
+const EditOptionCell = ({ option, idx }: { option: EditOption; idx: number }) => {
   const { name } = option;
-  const { setFocusedEditOption, focusedEditOption, setCurrentEditOption } = useEditMenuUIStore();
+  const { focusedEditOption, setCurrentEditOption, currentEditOption } = useEditMenuUIStore();
   const isFocused = name === focusedEditOption;
+  const isCurrent = name === currentEditOption;
   const blockEditorState = useBlockEditorState();
-
-  const focusEditOption = () => setFocusedEditOption(name);
+  const height = useEditOptionCellHeight(name);
 
   const handleClick = useCallback(() => {
-    if (blockEditorState !== BlockEditorState.EDITING_BLOCKS) return;
+    if (blockEditorState !== BlockEditorState.EDITING_BLOCKS || focusedEditOption !== name) return;
 
     switch (name) {
       case EditOptionName.AI:
@@ -27,31 +27,62 @@ const EditOptionCell = ({ option }: { option: EditOption }) => {
       case EditOptionName.GROUP_BLOCKS:
         break;
       case EditOptionName.DELETE:
-        setCurrentEditOption(name);
         break;
     }
-  }, [name, blockEditorState]);
+  }, [name, blockEditorState, focusedEditOption]);
 
   useEnterClickListener(() => handleClick());
 
+  const top = isCurrent ? 6 : `${idx * 46 + 6}px`;
+  const transition = { type: "spring", duration: 0.7, bounce: 0.15 };
+
   return (
-    <motion.div
-      onClick={handleClick}
-      onMouseEnter={focusEditOption}
-      initial={{
-        fontSize: "1.1rem",
-      }}
-      animate={{
-        outline: isFocused ? "2px solid" : "2px solid transparent",
-        outlineColor: isFocused ? option.outlineColor : "rgba(0, 0, 0, 0)",
-        outlineOffset: isFocused ? "0px" : "4px",
-        outlineWidth: isFocused ? "1px" : "4px",
-        fontSize: isFocused ? "1.3rem" : "1.1rem",
-      }}
-      className={`size-10 rounded-lg flex items-center justify-center ${option.color}`}
-    >
-      {option.icon}
-    </motion.div>
+    <AnimatePresence>
+      {(currentEditOption == name || currentEditOption == null) && (
+        <motion.div
+          onClick={handleClick}
+          initial={{
+            fontSize: "1.1rem",
+            top,
+            opacity: 0,
+          }}
+          exit={{
+            scale: 0.5,
+            x: -40,
+            opacity: 0,
+            top,
+          }}
+          transition={transition}
+          animate={{
+            opacity: 1,
+            width: isCurrent ? "30.5rem" : "2.5rem",
+            height: `${height}rem`,
+            top,
+            outlineColor: isFocused ? option.outlineColor : "rgba(0, 0, 0, 0)",
+            outlineOffset: isFocused ? "0px" : "6px",
+            outlineWidth: isFocused ? "1.5px" : "4px",
+          }}
+          className={`size-10 backdrop-blur-lg outline absolute overflow-hidden p-1 rounded-lg flex justify-center items-center ${option.color}`}
+        >
+          <motion.div
+            className="border-[1.5px] rounded-md "
+            initial={{
+              width: "60%",
+              height: "60%",
+            }}
+            animate={{
+              backgroundColor: isCurrent ? "#1f1f1fab" : "rgba(0, 0, 0, 0)",
+              borderColor: isCurrent ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0)",
+              width: isCurrent ? "100%" : "60%",
+              height: isCurrent ? "100%" : "60%",
+              padding: isCurrent ? "1rem" : "0",
+            }}
+          >
+            {option.icon}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
@@ -65,4 +96,18 @@ const useEnterClickListener = (callback: () => void) => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [callback]);
+};
+
+const useEditOptionCellHeight = (optionName: EditOptionName) => {
+  const { currentEditOption } = useEditMenuUIStore();
+  const isCurrent = optionName === currentEditOption;
+
+  if (!isCurrent) return 2.5;
+
+  switch (optionName) {
+    case EditOptionName.AI:
+      return 11.7;
+    case EditOptionName.STYLE:
+      return 11.7;
+  }
 };
