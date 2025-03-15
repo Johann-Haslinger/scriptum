@@ -1,3 +1,4 @@
 export * from "./blocks";
-export * from "./enums";
 export * from "./document";
+export * from "./enums";
+export * from "./editOption";

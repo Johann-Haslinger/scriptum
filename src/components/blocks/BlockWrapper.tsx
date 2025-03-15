@@ -9,7 +9,7 @@ interface BlockWrapperProps extends PropsWithChildren {
 
 const BlockWrapper = ({ children, block }: BlockWrapperProps) => {
   const { id } = block;
-  const { selectedBlocks, draggingBlocks } = useBlocksUIStore();
+  const { selectedBlockIds: selectedBlocks, draggingBlocks } = useBlocksUIStore();
   const blockEditorState = useBlockEditorState();
   const isSelected = selectedBlocks[id] || draggingBlocks[id];
 
@@ -34,7 +34,7 @@ interface SelectableProps extends PropsWithChildren {
   blockId: string;
 }
 const Selectable = ({ children, blockId }: SelectableProps) => {
-  const { selectedBlocks, setSelected, draggingBlocks } = useBlocksUIStore();
+  const { selectedBlockIds: selectedBlocks, setSelected, draggingBlocks } = useBlocksUIStore();
   const isPressed = selectedBlocks[blockId];
   const blockeditorState = useBlockEditorState();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);

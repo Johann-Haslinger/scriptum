@@ -7,7 +7,14 @@ import BlockComponentMatcher from "./BlockComponentMatcher";
 
 const DragAndDropWrapper = ({ children }: { children: React.ReactNode }) => {
   const { blocks, updateBlock } = useBlocksStore();
-  const { selectedBlocks, setDragging, draggingBlocks, setSelected, dropIndex, setDropIndex } = useBlocksUIStore();
+  const {
+    selectedBlockIds: selectedBlocks,
+    setDragging,
+    draggingBlocks,
+    setSelected,
+    dropIndex,
+    setDropIndex,
+  } = useBlocksUIStore();
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { delay: 0, tolerance: 5 } }),

@@ -6,7 +6,7 @@ import { useCurrentBlocks } from "./useCurrentBlocks";
 export const useBlockSelectionByKeyPress = () => {
   const blockEditorState = useBlockEditorState();
   const blocks = useCurrentBlocks();
-  const { setSelected, selectedBlocks: selectedBlocksRecord } = useBlocksUIStore();
+  const { setSelected, selectedBlockIds: selectedBlocksRecord } = useBlocksUIStore();
 
   const [selectionDirection, setSelectionDirection] = useState<"up" | "down" | null>(null);
 

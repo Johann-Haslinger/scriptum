@@ -12,7 +12,7 @@ const DocumentPage = ({ documentId }: { documentId: string }) => {
   return (
     <RubberBandSelector blocksAreaRef={blocksAreaRef}>
       <BlockAreaWrapper>
-        <p className="text-3xl font-semibold mb-6 px-8">Block Editor</p>
+        <p className="text-4xl font-extrabold mb-6 px-8">Block Editor</p>
         <BlocksRenderer blocksAreaRef={blocksAreaRef} documentId={documentId} />
       </BlockAreaWrapper>
     </RubberBandSelector>

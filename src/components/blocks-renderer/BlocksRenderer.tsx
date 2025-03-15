@@ -1,3 +1,5 @@
+"use client";
+
 import { useBlocksStore, useBlocksUIStore } from "@/store";
 import { useMemo } from "react";
 import BlockComponentMatcher from "./BlockComponentMatcher";
@@ -16,7 +18,7 @@ const BlocksRenderer = ({ blocksAreaRef, documentId }: BlockRendererProps) => {
   const { dropIndex } = useBlocksUIStore();
 
   return (
-    <div ref={blocksAreaRef}>
+    <div ref={blocksAreaRef} key={documentId}>
       <OutsideClickWrapper>
         <DragAndDropWrapper>
           <div className="space-y-0.5">

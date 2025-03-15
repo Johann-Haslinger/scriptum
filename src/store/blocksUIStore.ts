@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 type BlocksUIStore = {
-  selectedBlocks: Record<string, boolean>;
+  selectedBlockIds: Record<string, boolean>;
   setSelected: (blockId: string, value: boolean) => void;
   draggingBlocks: Record<string, boolean>;
   setDragging: (blockId: string, value: boolean) => void;
@@ -15,12 +15,12 @@ type BlocksUIStore = {
 
 export const useBlocksUIStore = create<BlocksUIStore>((set) => {
   return {
-    selectedBlocks: {},
+    selectedBlockIds: {},
     setSelected: (blockId, value) => {
       set((state) => {
-        const selectedBlocks = { ...state.selectedBlocks };
-        selectedBlocks[blockId] = value;
-        return { selectedBlocks: selectedBlocks };
+        const selectedBlockIds = { ...state.selectedBlockIds };
+        selectedBlockIds[blockId] = value;
+        return { selectedBlockIds };
       });
     },
     draggingBlocks: {},
