@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect } from "react";
-import { useBlockEditorState } from "../../hooks";
+import { useBlockEditorState, useIsDarkModeActive } from "../../hooks";
 import { useEditMenuUIStore } from "../../store/editMenuUIStore";
 import { BlockEditorState, EditOption, EditOptionName } from "../../types";
 
@@ -11,6 +11,7 @@ const EditOptionCell = ({ option, idx }: { option: EditOption; idx: number }) =>
   const isCurrent = name === currentEditOption;
   const blockEditorState = useBlockEditorState();
   const height = useEditOptionCellHeight(name);
+  const isDarkModeActive = useIsDarkModeActive();
 
   const handleClick = useCallback(() => {
     if (blockEditorState !== BlockEditorState.EDITING_BLOCKS || focusedEditOption !== name) return;
@@ -35,6 +36,8 @@ const EditOptionCell = ({ option, idx }: { option: EditOption; idx: number }) =>
 
   const top = isCurrent ? 6 : `${idx * 46 + 6}px`;
   const transition = { type: "spring", duration: 0.7, bounce: 0.15 };
+  const backgroundColorWhenCurrent = isDarkModeActive ? "#1f1f1fab" : "#eaeaea70";
+  const borderColorWhenCurrent = isDarkModeActive ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.095)";
 
   return (
     <AnimatePresence>
@@ -71,8 +74,8 @@ const EditOptionCell = ({ option, idx }: { option: EditOption; idx: number }) =>
               height: "60%",
             }}
             animate={{
-              backgroundColor: isCurrent ? "#1f1f1fab" : "rgba(0, 0, 0, 0)",
-              borderColor: isCurrent ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0)",
+              backgroundColor: isCurrent ? backgroundColorWhenCurrent : "rgba(0, 0, 0, 0)",
+              borderColor: isCurrent ? borderColorWhenCurrent : "rgba(0, 0, 0, 0)",
               width: isCurrent ? "100%" : "60%",
               height: isCurrent ? "100%" : "60%",
               padding: isCurrent ? "1rem" : "0",

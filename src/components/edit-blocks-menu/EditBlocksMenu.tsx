@@ -7,40 +7,39 @@ import { useEditMenuUIStore } from "../../store/editMenuUIStore";
 import { Block, BlockEditorState, BlockType, EditOption, EditOptionName } from "../../types";
 import EditMenuWrapper from "./EditMenuWrapper";
 import EditOptionCell from "./EditOptionCell";
-
 const allEditOptions: EditOption[] = [
   {
     name: EditOptionName.AI,
     icon: <IoSparkles />,
-    color: "text-blue-400/60 bg-blue-400/10",
+    color: "text-blue-600 dark:text-blue-600/60 bg-blue-600/15 dark:bg-blue-600/10",
     outlineColor: "rgba(0, 123, 255, 0.5)",
     order: 0,
   },
   {
     name: EditOptionName.STYLE,
     icon: <IoText />,
-    color: "text-green-400/60 bg-green-400/10",
+    color: "text-green-600 dark:text-green-600/60 bg-green-600/15 dark:bg-green-600/10",
     outlineColor: "rgba(5, 223, 114, 0.4)",
     order: 1,
   },
   {
     name: EditOptionName.ADD_CONTENT,
     icon: <IoAddCircleOutline />,
-    color: "text-fuchsia-400/60 bg-fuchsia-400/10",
+    color: "text-fuchsia-600 dark:text-fuchsia-600/60 bg-fuchsia-600/15 dark:bg-fuchsia-600/10",
     outlineColor: "rgba(221, 114, 250, 0.4)",
     order: 2,
   },
   {
     name: EditOptionName.GROUP_BLOCKS,
     icon: <IoArrowForward />,
-    color: "text-yellow-400/60 bg-yellow-400/10",
+    color: "text-yellow-600 dark:text-yellow-600/60 bg-yellow-600/15 dark:bg-yellow-600/10",
     outlineColor: "rgba(255, 204, 0, 0.4)",
     order: 3,
   },
   {
     name: EditOptionName.DELETE,
     icon: <IoTrash />,
-    color: "text-red-400/60 bg-red-400/10",
+    color: "text-red-600 dark:text-red-600/60 bg-red-600/15 dark:bg-red-600/10",
     outlineColor: "rgba(255, 59, 48, 0.4)",
     order: 4,
   },

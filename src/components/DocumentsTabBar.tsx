@@ -52,9 +52,9 @@ const RootDocumentTab = () => {
       onClick={openRootDocument}
       className={`${
         isRootDocumentCurrent
-          ? "bg-white/15 text-white/80"
-          : "bg-white/[0.07] hover:bg-white/10 cursor-pointer text-white/40"
-      } bg-white/10 flex space-x-2 text-white/80 rounded-full py-1 items-center px-3`}
+          ? "bg-black/10 dark:bg-white/15 text-black/80 dark:text-white/80"
+          : "bg-black/5 dark:bg-white/[0.07] hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer text-black/40 dark:text-white/40"
+      } overflow-hidden flex space-x-2 rounded-full py-1 items-center px-3`}
     >
       <IoHome />
       <AnimatePresence>
@@ -77,12 +77,16 @@ const RootDocumentTab = () => {
 const DocumentTab = ({ document }: { document: Document }) => {
   const { id, name } = document;
   const { currentDocumentId, setCurrentDocument, setDocumentOpen } = useDocumentsUIStore();
+  const { rootDocumentId } = useRootDocument();
   const isCurrent = currentDocumentId === id;
   const [isHovered, setIsHovered] = useState(false);
   const isCloseIconVisible = isHovered || isCurrent;
 
   const setDocumentCurrent = () => setCurrentDocument(id);
-  const closeDocument = () => setDocumentOpen(id, false);
+  const closeDocument = () => {
+    if (isCurrent) setCurrentDocument(rootDocumentId);
+    setDocumentOpen(id, false);
+  };
 
   const closeButtonVariants = {
     hidden: { opacity: 0, width: 0, marginRight: 0 },
@@ -96,7 +100,11 @@ const DocumentTab = ({ document }: { document: Document }) => {
       onMouseLeave={() => setIsHovered(false)}
       className={`flex items-center active:opacity-50 transition-all rounded-full pr-4 py-1
       ${isCloseIconVisible ? "pl-2" : "pl-4"}
-      ${isCurrent ? "bg-white/15 text-white/80" : "bg-white/[0.07] hover:bg-white/10 cursor-pointer text-white/40"}`}
+      ${
+        isCurrent
+          ? "bg-black/10 dark:bg-white/15 text-black/80 dark:text-white/80"
+          : "bg-black/5 dark:bg-white/[0.07] dark:hover:bg-white/10 cursor-pointer text-black/40 dark:text-white/40"
+      }`}
     >
       <AnimatePresence>
         {isCloseIconVisible && (
@@ -109,7 +117,10 @@ const DocumentTab = ({ document }: { document: Document }) => {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="bg-white/15 cursor-pointer hover:bg-white/40 hover:scale-105 size-4 flex justify-center items-center text-sm rounded-full text-black/70"
+            whileHover={{
+              scale: 1.1,
+            }}
+            className="bg-black/30 dark:bg-white/15 hover:bg-black/60 dark:hover:bg-white/40 cursor-pointer size-4 flex justify-center items-center text-sm rounded-full text-white/80 dark:text-black/70"
           >
             <IoClose />
           </motion.div>
@@ -122,7 +133,7 @@ const DocumentTab = ({ document }: { document: Document }) => {
 
 const AddTabButton = () => {
   return (
-    <motion.div className="p-2 text-xl cursor-pointer">
+    <motion.div className="p-2 opacity-60 active:opacity-40 hover:opacity-100 transition-all text-xl cursor-pointer">
       <IoAdd />
     </motion.div>
   );

@@ -1,10 +1,12 @@
 import { useRef } from "react";
 import { useBlockSelectionByKeyPress } from "../hooks/useBlockSelectionByKeyPress";
+import { Document } from "../types";
 import { BlocksRenderer } from "./blocks-renderer";
 import { BlockAreaWrapper } from "./edit-blocks-menu";
 import { RubberBandSelector } from "./RubberBandSelector";
 
-const DocumentPage = ({ documentId }: { documentId: string }) => {
+const DocumentEditor = ({ document }: { document: Document }) => {
+  const { id, name } = document;
   const blocksAreaRef = useRef<HTMLDivElement | null>(null);
 
   useBlockSelectionByKeyPress();
@@ -12,11 +14,11 @@ const DocumentPage = ({ documentId }: { documentId: string }) => {
   return (
     <RubberBandSelector blocksAreaRef={blocksAreaRef}>
       <BlockAreaWrapper>
-        <p className="text-4xl font-extrabold mb-6 px-8">Block Editor</p>
-        <BlocksRenderer blocksAreaRef={blocksAreaRef} documentId={documentId} />
+        <p className="text-3xl font-extrabold mb-6 px-8">{name}</p>
+        <BlocksRenderer blocksAreaRef={blocksAreaRef} documentId={id} />
       </BlockAreaWrapper>
     </RubberBandSelector>
   );
 };
 
-export default DocumentPage;
+export default DocumentEditor;

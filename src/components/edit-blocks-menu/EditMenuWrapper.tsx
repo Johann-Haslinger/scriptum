@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { PropsWithChildren, useEffect, useState } from "react";
+import { useIsDarkModeActive } from "../../hooks";
 import { useBlocksStore, useBlocksUIStore } from "../../store";
 import { useEditMenuUIStore } from "../../store/editMenuUIStore";
 
@@ -15,6 +16,9 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
   const topDistance = useTopDistance(menuHeight);
   const leftDistance = useLeftDistance(menuWidth);
   const isAnEditOptionSelected = useIsAnOptionSelected();
+  const isDarkModeActive = useIsDarkModeActive();
+
+  const backgroundColorWhenVisible = isDarkModeActive ? "#1f1f1fab" : "#eaeaea4b";
 
   const editMenuVariants = {
     hidden: {
@@ -35,7 +39,7 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
       width: menuWidth,
       height: menuHeight,
       outlineColor: isAnEditOptionSelected ? "rgba(0, 0, 0, 0)" : "rgba(255, 255, 255, 0.13)",
-      backgroundColor: isAnEditOptionSelected ? "rgba(0, 0, 0, 0)" : "#1f1f1fab",
+      backgroundColor: isAnEditOptionSelected ? "rgba(0, 0, 0, 0)" : backgroundColorWhenVisible,
     },
   };
 
