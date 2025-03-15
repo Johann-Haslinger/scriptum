@@ -25,7 +25,7 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
       opacity: 0,
       top: topDistance,
       left: leftDistance - 20,
-      scale: 0.7,
+      scale: 0.7, 
       width: menuWidth,
       height: menuHeight,
       outlineColor: "rgba(0, 0, 0, 0)",

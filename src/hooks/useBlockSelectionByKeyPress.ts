@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useBlocksUIStore } from "../store";
 import { useBlockEditorState } from "./useBlockEditorState";
 import { useCurrentBlocks } from "./useCurrentBlocks";
+import { useSelectedBlocks } from "./useSelectedBlocks";
 
 export const useBlockSelectionByKeyPress = () => {
   const blockEditorState = useBlockEditorState();
   const blocks = useCurrentBlocks();
-  const { setSelected, selectedBlockIds: selectedBlocksRecord } = useBlocksUIStore();
-
+  const { setSelected, selectedBlockIds } = useBlocksUIStore();
   const [selectionDirection, setSelectionDirection] = useState<"up" | "down" | null>(null);
+  const selectedBlocks = useSelectedBlocks();
 
   useEffect(() => {
     setSelectionDirection(null);
@@ -17,8 +18,9 @@ export const useBlockSelectionByKeyPress = () => {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+      console.log("key pressed");
 
-      const selectedBlocks = blocks.filter((block) => selectedBlocksRecord[block.id]);
+      console.log("selected blocks", selectedBlocks);
       if (selectedBlocks.length === 0) return;
 
       const sortedBlocksAsc = [...blocks].sort((a, b) => a.order - b.order);
@@ -26,8 +28,8 @@ export const useBlockSelectionByKeyPress = () => {
 
       const referenceBlock =
         e.key === "ArrowUp"
-          ? sortedBlocksAsc.find((block) => selectedBlocksRecord[block.id])
-          : sortedBlocksDesc.find((block) => selectedBlocksRecord[block.id]);
+          ? sortedBlocksAsc.find((block) => selectedBlockIds[block.id])
+          : sortedBlocksDesc.find((block) => selectedBlockIds[block.id]);
 
       if (!referenceBlock) return;
 
@@ -55,8 +57,8 @@ export const useBlockSelectionByKeyPress = () => {
           } else {
             const firstSelectedBlock =
               selectionDirection === "up"
-                ? sortedBlocksAsc.find((block) => selectedBlocksRecord[block.id])
-                : sortedBlocksDesc.find((block) => selectedBlocksRecord[block.id]);
+                ? sortedBlocksAsc.find((block) => selectedBlockIds[block.id])
+                : sortedBlocksDesc.find((block) => selectedBlockIds[block.id]);
 
             if (firstSelectedBlock) {
               setSelected(firstSelectedBlock.id, false);
@@ -67,7 +69,7 @@ export const useBlockSelectionByKeyPress = () => {
 
         setSelected(blocks[newIndex].id, true);
       } else {
-        blocks.filter((block) => selectedBlocksRecord[block.id]).forEach((block) => setSelected(block.id, false));
+        blocks.filter((block) => selectedBlockIds[block.id]).forEach((block) => setSelected(block.id, false));
         setSelected(blocks[newIndex].id, true);
         setSelectionDirection(null);
       }
@@ -75,5 +77,5 @@ export const useBlockSelectionByKeyPress = () => {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [blockEditorState, blocks, selectedBlocksRecord, setSelected, selectionDirection]);
+  }, [blockEditorState, blocks, selectedBlocks, setSelected, selectionDirection]);
 };

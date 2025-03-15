@@ -204,9 +204,12 @@ const useDocumentsNavigation = () => {
   const { currentDocumentId, setCurrentDocument } = useDocumentsUIStore();
   const openDocuments = useOpenDocuments();
   const { rootDocumentId, isRootDocumentCurrent } = useRootDocument();
+  const blockEditorState = useBlockEditorState();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (blockEditorState !== BlockEditorState.VIEWING) return;
+
       if (e.key === "Escape" && currentDocumentId !== rootDocumentId) {
         setCurrentDocument(rootDocumentId);
       }
@@ -222,7 +225,7 @@ const useDocumentsNavigation = () => {
       });
 
       const currentDocumentIndex = openDocuments.findIndex((doc) => doc.id === currentDocumentId);
-      if (e.key === "ArrowLeft") {
+      if (e.key === "ArrowLeft" && e.metaKey) {
         if (currentDocumentIndex > 0) {
           setCurrentDocument(openDocuments[currentDocumentIndex - 1].id);
         } else if (isRootDocumentCurrent) {
@@ -230,7 +233,7 @@ const useDocumentsNavigation = () => {
         } else {
           setCurrentDocument(rootDocumentId);
         }
-      } else if (e.key === "ArrowRight") {
+      } else if (e.key === "ArrowRight" && e.metaKey) {
         if (currentDocumentIndex < openDocuments.length - 1) {
           setCurrentDocument(openDocuments[currentDocumentIndex + 1].id);
         } else {
@@ -241,5 +244,5 @@ const useDocumentsNavigation = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentDocumentId, setCurrentDocument, rootDocumentId]);
+  }, [currentDocumentId, setCurrentDocument, rootDocumentId, blockEditorState]);
 };

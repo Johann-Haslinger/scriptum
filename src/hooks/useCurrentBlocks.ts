@@ -1,9 +1,8 @@
-import { useBlocksStore } from "../store";
-import { useDocumentsStore } from "../store/documentsStore";
+import { useBlocksStore, useDocumentsUIStore } from "../store";
 
 export const useCurrentBlocks = () => {
   const { blocks } = useBlocksStore();
-  const { currentDocumentId } = useDocumentsStore();
+  const { currentDocumentId } = useDocumentsUIStore();
 
   return blocks.filter((block) => block.documentId === currentDocumentId).sort((a, b) => a.order - b.order);
 };

@@ -1,4 +1,4 @@
-import { useBlockEditorState, useDisableZoomAndScrollOnTouch } from "@/hooks";
+import { useBlockEditorState, useBlockSelectionByKeyPress, useDisableZoomAndScrollOnTouch } from "@/hooks";
 import { useOpenRootDocument } from "../hooks/useOpenRootDocumentInitially";
 import { useDocumentsStore, useDocumentsUIStore } from "../store";
 import { BlockEditorState } from "../types";
@@ -13,6 +13,7 @@ export default function BlockEditor() {
 
   useDisableZoomAndScrollOnTouch();
   useOpenRootDocument();
+  useBlockSelectionByKeyPress();
 
   return (
     <div className={`${blockEditorState == BlockEditorState.EDITING_BLOCKS && "select-none"}`}>

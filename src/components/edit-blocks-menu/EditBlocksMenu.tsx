@@ -125,7 +125,7 @@ const useEditOptions = () => {
     } else {
       addEditOption(EditOptionName.STYLE);
     }
-  }, [selectedBlockIds, blocks, focusedEditOption, setFocusedEditOption]);
+  }, [selectedBlockIds, blocks, focusedEditOption, setFocusedEditOption, blockEditorState]);
 
   useEditOptionNavigationByKeyPress(editOptions);
 
