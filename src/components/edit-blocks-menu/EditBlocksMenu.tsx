@@ -7,6 +7,7 @@ import { useEditMenuUIStore } from "../../store/editMenuUIStore";
 import { Block, BlockEditorState, BlockType, EditOption, EditOptionName } from "../../types";
 import EditMenuWrapper from "./EditMenuWrapper";
 import EditOptionCell from "./EditOptionCell";
+
 const allEditOptions: EditOption[] = [
   {
     name: EditOptionName.AI,

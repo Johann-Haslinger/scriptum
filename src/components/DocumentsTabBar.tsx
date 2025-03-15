@@ -8,26 +8,36 @@ import { Tooltip } from "./tooltip";
 
 const DocumentsTabBar = () => {
   const openDocuments = useOpenDocuments();
-  const isVisible = useBlockEditorState() === BlockEditorState.VIEWING;
+  const { isCommandMenuOpen } = useCommandMenuUIStore();
+  const isVisible = useBlockEditorState() === BlockEditorState.VIEWING && !isCommandMenuOpen;
+
+  const tabBarVariants = {
+    hidden: { y: -16, opacity: 0, scale: 0.9 },
+    visible: { y: 0, opacity: 1, scale: 1 },
+  };
 
   return (
-    <motion.div
-      animate={{
-        opacity: isVisible ? 1 : 0,
-        scale: isVisible ? 1 : 0.8,
-      }}
-      className="fixed select-none z-[200] flex top-4 w-fit left-1/2 transform -translate-x-1/2"
-    >
-      <RootDocumentTab />
-      {openDocuments.length > 0 && (
-        <div className="flex ml-2 space-x-2">
-          {openDocuments.map((doc, idx) => (
-            <DocumentTab index={idx} document={doc} key={doc.id} />
-          ))}
-        </div>
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          variants={tabBarVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          className="fixed select-none z-5 flex top-4 w-fit left-1/2 transform -translate-x-1/2"
+        >
+          <RootDocumentTab />
+          {openDocuments.length > 0 && (
+            <div className="flex ml-2 space-x-2">
+              {openDocuments.map((doc, idx) => (
+                <DocumentTab index={idx} document={doc} key={doc.id} />
+              ))}
+            </div>
+          )}
+          <AddTabButton />
+        </motion.div>
       )}
-      <AddTabButton />
-    </motion.div>
+    </AnimatePresence>
   );
 };
 
@@ -162,7 +172,7 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
 
 const AddTabButton = () => {
   const { setIsCommandMenuOpen } = useCommandMenuUIStore();
-  
+
   const openCommandMenu = () => setIsCommandMenuOpen(true);
 
   return (

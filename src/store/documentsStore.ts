@@ -12,16 +12,29 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
   const initialDocuments: Document[] = [
     {
       id: "1",
-      name: "Document 1",
+      name: "Project Alpha",
       type: "root",
+      updatedAt: new Date().toISOString(),
     },
     {
       id: "2",
-      name: "Document 2",
+      name: "Beta Blueprint",
+      updatedAt: new Date().toISOString(),
     },
     {
       id: "3",
-      name: "Document 3",
+      name: "Gamma Guide",
+      updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "4",
+      name: "Delta Design",
+      updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "5",
+      name: "Epsilon Essay",
+      updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     },
   ];
   return {
