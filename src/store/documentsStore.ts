@@ -6,20 +6,22 @@ type DocumentsStore = {
   addDocument: (document: Document) => void;
   removeDocument: (documentId: string) => void;
   updateDocument: (document: Document) => void;
-  currentDocumentId: string;
-  setCurrentDocumentId: (documentId: string) => void;
 };
 
 export const useDocumentsStore = create<DocumentsStore>((set) => {
   const initialDocuments: Document[] = [
     {
       id: "1",
-      title: "Document 1",
+      name: "Document 1",
       type: "root",
     },
     {
       id: "2",
-      title: "Document 2",
+      name: "Document 2",
+    },
+    {
+      id: "3",
+      name: "Document 3",
     },
   ];
   return {
@@ -41,10 +43,6 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
         const documents = state.documents.map((doc) => (doc.id === document.id ? document : doc));
         return { documents };
       });
-    },
-    currentDocumentId: initialDocuments[0].id,
-    setCurrentDocumentId: (documentId) => {
-      set({ currentDocumentId: documentId });
     },
   };
 });
