@@ -18,7 +18,7 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
   const isAnEditOptionSelected = useIsAnOptionSelected();
   const isDarkModeActive = useIsDarkModeActive();
 
-  const backgroundColorWhenVisible = isDarkModeActive ? "#1f1f1fab" : "#eaeaea4b";
+  const backgroundColorWhenVisible = isDarkModeActive ? "#1f1f1f38" : "#eaeaea4b";
 
   const editMenuVariants = {
     hidden: {
