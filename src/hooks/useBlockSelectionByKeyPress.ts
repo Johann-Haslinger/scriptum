@@ -13,14 +13,12 @@ export const useBlockSelectionByKeyPress = () => {
 
   useEffect(() => {
     setSelectionDirection(null);
-  }, [blockEditorState]);
+  }, [blockEditorState, setSelectionDirection]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
-      console.log("key pressed");
 
-      console.log("selected blocks", selectedBlocks);
       if (selectedBlocks.length === 0) return;
 
       const sortedBlocksAsc = [...blocks].sort((a, b) => a.order - b.order);

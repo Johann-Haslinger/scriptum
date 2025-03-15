@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { IoAdd, IoClose, IoHome } from "react-icons/io5";
+import { IoClose, IoHome, IoSearch } from "react-icons/io5";
 import { useBlockEditorState } from "../hooks";
-import { useDocumentsStore, useDocumentsUIStore } from "../store";
+import { useCommandMenuUIStore, useDocumentsStore, useDocumentsUIStore } from "../store";
 import { BlockEditorState, Document } from "../types";
 import { Tooltip } from "./tooltip";
 
@@ -161,7 +161,9 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
 };
 
 const AddTabButton = () => {
-  const openCommandMenu = () => console.log("Open command menu");
+  const { setIsCommandMenuOpen } = useCommandMenuUIStore();
+  
+  const openCommandMenu = () => setIsCommandMenuOpen(true);
 
   return (
     <div>
@@ -171,10 +173,10 @@ const AddTabButton = () => {
         data-tooltip-id="open-new-document"
         className="p-2 rounded-lg ml-2 focus:outline-2 focus:bg-blue-500/20  outline-blue-500/40 outline-offset-1 opacity-60 active:opacity-40 hover:opacity-100 transition-all text-xl cursor-pointer"
       >
-        <IoAdd />
+        <IoSearch />
       </motion.button>
       <Tooltip place="right" id="open-new-document">
-        Open new document
+        Search document
       </Tooltip>
     </div>
   );
@@ -244,5 +246,5 @@ const useDocumentsNavigation = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentDocumentId, setCurrentDocument, rootDocumentId, blockEditorState]);
+  }, [currentDocumentId, setCurrentDocument, rootDocumentId, blockEditorState, isRootDocumentCurrent, openDocuments]);
 };

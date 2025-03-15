@@ -16,7 +16,8 @@ export const RubberBandSelector = ({ children, blocksAreaRef }: RubberBandSelect
 
   useEffect(() => {
     setIsRubberBandSelecting(isSelecting);
-  }, [isSelecting]);
+    setIsRubberBandSelecting(isSelecting);
+  }, [isSelecting, setIsRubberBandSelecting]);
 
   useEffect(() => {
     if (isSelecting) {

@@ -2,6 +2,7 @@ import { useBlockEditorState, useBlockSelectionByKeyPress, useDisableZoomAndScro
 import { useOpenRootDocument } from "../hooks/useOpenRootDocumentInitially";
 import { useDocumentsStore, useDocumentsUIStore } from "../store";
 import { BlockEditorState } from "../types";
+import CommandMenu from "./CommandMenu";
 import DocumentEditor from "./DocumentEditor";
 import DocumentsTabBar from "./DocumentsTabBar";
 import { EditBlocksMenu } from "./edit-blocks-menu";
@@ -22,6 +23,7 @@ export default function BlockEditor() {
       {documents.map((doc) => doc.id === currentDocumentId && <DocumentEditor key={doc.id} document={doc} />)}
 
       <EditBlocksMenu />
+      <CommandMenu />
     </div>
   );
 }

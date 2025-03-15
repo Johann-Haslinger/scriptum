@@ -74,7 +74,6 @@ export const useBlocksStore = create<BlocksStore>((set, get) => {
       const blocks = yArray.toArray();
       const index = blocks.findIndex((b) => b.id === block.id);
       if (index !== -1) {
-        console.log("updateBlock", block);
         yArray.delete(index, 1);
         yArray.insert(index, [block]);
       }

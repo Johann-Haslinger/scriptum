@@ -77,7 +77,7 @@ const useEditOptions = () => {
   useEffect(() => {
     setCurrentEditOption(null);
     setFocusedEditOption(EditOptionName.AI);
-  }, [blockEditorState]);
+  }, [blockEditorState, setCurrentEditOption, setFocusedEditOption]);
 
   const addEditOption = (option: EditOptionName) => {
     setEditOptions((prev) => {
@@ -102,7 +102,7 @@ const useEditOptions = () => {
 
   useEffect(() => {
     setEditOptions(Object.values(allEditOptions));
-  }, [isVisible]);
+  }, [isVisible, setEditOptions]);
 
   useEffect(() => {
     const selectedBlocks: Block[] = blocks.filter((block) => selectedBlockIds[block.id]);

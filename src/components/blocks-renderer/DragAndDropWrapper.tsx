@@ -1,4 +1,13 @@
-import { closestCenter, DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  closestCenter,
+  DndContext,
+  DragOverEvent,
+  DragOverlay,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import { GripVertical } from "lucide-react";
 import { useBlocksStore, useBlocksUIStore } from "../../store";
@@ -21,7 +30,7 @@ const DragAndDropWrapper = ({ children }: { children: React.ReactNode }) => {
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
   );
 
-  function handleDragStart(event: any) {
+  function handleDragStart(event: DragOverEvent) {
     const draggedBlock = blocks.find((b) => b.id === event.active.id);
     if (!draggedBlock) return;
     setSelected(draggedBlock.id, true);
@@ -29,9 +38,8 @@ const DragAndDropWrapper = ({ children }: { children: React.ReactNode }) => {
     setDragging(draggedBlock.id, true);
   }
 
-  function handleDragOver(event: any) {
+  function handleDragOver(event: DragOverEvent) {
     const { over } = event;
-    console.log("over", over);
     if (!over) return;
 
     const overIndex = blocks.sort((a, b) => a.order - b.order).findIndex((b) => b.id === over.id);
@@ -43,9 +51,8 @@ const DragAndDropWrapper = ({ children }: { children: React.ReactNode }) => {
     setDropIndex(overIndex);
   }
 
-  function handleDragEnd(event: any) {
+  function handleDragEnd(event: DragOverEvent) {
     const draggedBlock = blocks.find((b) => b.id === event.active.id);
-    console.log("dropIndex", dropIndex);
 
     if (draggedBlock?.order !== blocks[dropIndex]?.order && dropIndex !== -1) {
       const sortedBlocks = blocks.sort((a, b) => a.order - b.order);

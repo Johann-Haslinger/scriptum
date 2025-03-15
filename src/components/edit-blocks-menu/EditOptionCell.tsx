@@ -30,7 +30,7 @@ const EditOptionCell = ({ option, idx }: { option: EditOption; idx: number }) =>
       case EditOptionName.DELETE:
         break;
     }
-  }, [name, blockEditorState, focusedEditOption]);
+  }, [name, blockEditorState, focusedEditOption, setCurrentEditOption]);
 
   useEnterClickListener(() => handleClick());
 
