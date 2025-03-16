@@ -3,3 +3,4 @@ export * from "./blocksUIStore";
 export * from "./commandMenuUIStore";
 export * from "./documentsStore";
 export * from "./documentsUIStore";
+export * from "./userStore";

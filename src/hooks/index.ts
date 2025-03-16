@@ -7,3 +7,4 @@ export * from "./useOutsideClick";
 export * from "./useRootDocument";
 export * from "./useSelectedBlocks";
 export * from "./useOpenRootDocumentInitially";
+export * from "./useAuthManager";
