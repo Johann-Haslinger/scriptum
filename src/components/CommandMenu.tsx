@@ -20,7 +20,7 @@ const CommandMenu = () => {
         {isCommandMenuOpen && (
           <CommandMenuWrapper>
             <CommandMenuInput />
-            {searchQuery ? <ResultsList /> : <RecentDocumentList />}
+            {searchQuery.length > 0 ? <ResultsList /> : <RecentDocumentList />}
           </CommandMenuWrapper>
         )}
       </AnimatePresence>
@@ -41,8 +41,8 @@ const CommandMenuInput = () => {
   useInitialFocus(inputRef);
 
   return (
-    <div className="flex pt-4 pb-2 justify-between items-center px-4 xl:pl-6 w-full">
-      <div>
+    <div className="flex pt-6 pb-2 justify-between items-center px-4 xl:px-6 w-full">
+      <div className="w-full">
         <input
           ref={inputRef}
           value={searchQuery}
@@ -51,7 +51,7 @@ const CommandMenuInput = () => {
           placeholder="Type a command or search..."
         />
         {focusedDocumentName && searchQuery.length > 0 && (
-          <div className="absolute top-[12px] flex line-clamp-1 left-0 px-6">
+          <div className="absolute top-[20px] flex line-clamp-1 left-0 px-6">
             <div className="py-1">{searchQuery}</div>
             <div className="opacity-60 bg-white/5 pr-2 rounded-lg py-1">
               {focusedDocumentName.toLocaleLowerCase().startsWith(searchQuery.toLocaleLowerCase()) &&
@@ -64,7 +64,7 @@ const CommandMenuInput = () => {
       {searchQuery.length > 0 && (
         <button
           onClick={() => setIsCommandMenuOpen(false)}
-          className="bg-white/25 text-black/60 rounded-full p-1 flex justify-between"
+          className="bg-white/20 text-black/60 rounded-full p-1 flex justify-between"
         >
           <IoClose />
         </button>
@@ -124,11 +124,12 @@ const RecentDocumentList = () => {
 const DocumentItem = ({ document }: { document: Document }) => {
   const { name, id } = document;
   const { searchQuery, focusedDocumentId, setFocusedDocumentId, setIsCommandMenuOpen } = useCommandMenuUIStore();
-  const { setCurrentDocument } = useDocumentsUIStore();
+  const { setCurrentDocument, setDocumentOpen } = useDocumentsUIStore();
   const isFocused = focusedDocumentId === id;
 
   const openDocument = () => {
     setCurrentDocument(id);
+    setDocumentOpen(id, true);
     setIsCommandMenuOpen(false);
   };
 
@@ -168,7 +169,7 @@ const useCommandMenuKeyboardNavigation = () => {
 
       if (event.key === "Escape") {
         setIsCommandMenuOpen(false);
-      } else if ((event.key === "Enter" || event.key === "Tab") && focusedDocumentId) {
+      } else if (event.key === "Enter" && focusedDocumentId) {
         setCurrentDocument(focusedDocumentId);
         setDocumentOpen(focusedDocumentId, true);
         setIsCommandMenuOpen(false);

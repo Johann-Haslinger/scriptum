@@ -4,7 +4,7 @@ import { useDocumentsStore, useDocumentsUIStore } from "../store";
 import { BlockEditorState } from "../types";
 import CommandMenu from "./CommandMenu";
 import DocumentEditor from "./DocumentEditor";
-import DocumentsTabBar from "./DocumentsTabBar";
+import DocumentsTabBar from "./documents-tab-bar/DocumentsTabBar";
 import { EditBlocksMenu } from "./edit-blocks-menu";
 
 export default function BlockEditor() {

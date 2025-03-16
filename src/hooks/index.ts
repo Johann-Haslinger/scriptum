@@ -4,4 +4,5 @@ export * from "./useCurrentBlocks";
 export * from "./useDisableZoomAndScrollOnTouch";
 export * from "./useIsDarkModeActive";
 export * from "./useOutsideClick";
+export * from "./useRootDocument";
 export * from "./useSelectedBlocks";
