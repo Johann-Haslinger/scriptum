@@ -1,10 +1,17 @@
-import { IoReturnDownBack } from "react-icons/io5";
+import { CornerDownLeft, File } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useCommandMenuUIStore, useDocumentsUIStore } from "../../store";
 import { Document } from "../../types";
 
 const DocumentItem = ({ document }: { document: Document }) => {
   const { name, id } = document;
-  const { searchQuery, focusedDocumentId, setFocusedDocumentId, setIsCommandMenuOpen } = useCommandMenuUIStore();
+  const {
+    searchQuery,
+    focusedMenuItem: focusedDocumentId,
+    setFocusedMenuItem,
+    setIsCommandMenuOpen,
+  } = useCommandMenuUIStore();
+  const hasMouseMoved = useHasMouseMoved();
   const { setCurrentDocument, setDocumentOpen } = useDocumentsUIStore();
   const isFocused = focusedDocumentId === id;
 
@@ -23,13 +30,18 @@ const DocumentItem = ({ document }: { document: Document }) => {
   return (
     <div
       onClick={openDocument}
-      onMouseEnter={() => setFocusedDocumentId(id)}
-      className={`${isFocused && "bg-white/5 rounded-xl"} flex justify-between w-full px-3 pl-4 py-2.5`}
+      onMouseEnter={() => {
+        if (hasMouseMoved) setFocusedMenuItem(id);
+      }}
+      className={`${isFocused && "bg-white/5 rounded-xl"} flex cursor-pointer justify-between w-full px-3 py-2.5`}
     >
-      <p>{searchQuery.length == 0 ? name : highlightedName}</p>
+      <div className="flex items-center space-x-3">
+        <File className="opacity-80" size={18} />
+        <p>{searchQuery.length == 0 ? name || "Untitled" : highlightedName}</p>
+      </div>
       {isFocused && (
-        <div className="px-4 py-1 rounded-lg text-white/80">
-          <IoReturnDownBack />
+        <div className="p-1 text-white/80">
+          <CornerDownLeft size={16} />
         </div>
       )}
     </div>
@@ -37,3 +49,21 @@ const DocumentItem = ({ document }: { document: Document }) => {
 };
 
 export default DocumentItem;
+
+const useHasMouseMoved = () => {
+  const { isCommandMenuOpen } = useCommandMenuUIStore();
+  const [hasMouseMoved, setHasMouseMoved] = useState(false);
+
+  useEffect(() => {
+    if (isCommandMenuOpen) {
+      setHasMouseMoved(false);
+
+      const handleMouseMove = () => setHasMouseMoved(true);
+      window.addEventListener("mousemove", handleMouseMove);
+
+      return () => window.removeEventListener("mousemove", handleMouseMove);
+    }
+  }, [isCommandMenuOpen]);
+
+  return hasMouseMoved;
+};

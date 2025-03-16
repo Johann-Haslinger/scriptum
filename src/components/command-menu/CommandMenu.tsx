@@ -1,7 +1,8 @@
 import { compareDesc, parseISO } from "date-fns";
 import { AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
-import { useCommandMenuUIStore, useDocumentsStore, useDocumentsUIStore } from "../../store";
+import { useCommandMenuUIStore, useDocumentsStore, useDocumentsUIStore, useUserStore } from "../../store";
+import { newDocument } from "../../utils";
 import BackgroundOverlay from "./BackgroundOverlay";
 import CommandMenuInput from "./CommandMenuInput";
 import CommandMenuWrapper from "./CommandMenuWrapper";
@@ -41,8 +42,10 @@ const useSearchQueryReset = () => {
 };
 
 const useCommandMenuKeyboardNavigation = () => {
-  const { isCommandMenuOpen, setIsCommandMenuOpen, focusedDocumentId } = useCommandMenuUIStore();
+  const { isCommandMenuOpen, setIsCommandMenuOpen, focusedMenuItem } = useCommandMenuUIStore();
   const { setCurrentDocument, setDocumentOpen } = useDocumentsUIStore();
+  const { addDocument } = useDocumentsStore();
+  const userId = useUserStore((state) => state.userId);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -54,10 +57,18 @@ const useCommandMenuKeyboardNavigation = () => {
 
       if (event.key === "Escape") {
         setIsCommandMenuOpen(false);
-      } else if (event.key === "Enter" && focusedDocumentId) {
-        setCurrentDocument(focusedDocumentId);
-        setDocumentOpen(focusedDocumentId, true);
-        setIsCommandMenuOpen(false);
+      } else if (event.key === "Enter" && focusedMenuItem) {
+        if (focusedMenuItem === "new-document") {
+          const newDoc = newDocument(userId);
+          addDocument(newDoc);
+          setCurrentDocument(newDoc.id);
+          setDocumentOpen(newDoc.id, true);
+          setIsCommandMenuOpen(false);
+        } else {
+          setCurrentDocument(focusedMenuItem);
+          setDocumentOpen(focusedMenuItem, true);
+          setIsCommandMenuOpen(false);
+        }
       }
     };
 
@@ -65,40 +76,41 @@ const useCommandMenuKeyboardNavigation = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isCommandMenuOpen, setIsCommandMenuOpen, focusedDocumentId, setCurrentDocument]);
+  }, [isCommandMenuOpen, setIsCommandMenuOpen, focusedMenuItem, setCurrentDocument, addDocument]);
 };
 
 const useDocumentFocus = () => {
-  const { focusedDocumentId, setFocusedDocumentId, isCommandMenuOpen } = useCommandMenuUIStore();
+  const { focusedMenuItem, setFocusedMenuItem, isCommandMenuOpen } = useCommandMenuUIStore();
   const documents = useVisibleDocuments();
+  const menuItems = ["new-document", ...documents.map((doc) => doc.id)];
 
   useEffect(() => {
     if (!isCommandMenuOpen) {
-      setFocusedDocumentId(null);
+      setFocusedMenuItem(null);
     }
-  }, [isCommandMenuOpen, setFocusedDocumentId]);
+  }, [isCommandMenuOpen, setFocusedMenuItem]);
 
   useEffect(() => {
-    if (!focusedDocumentId && documents.length > 0) {
-      setFocusedDocumentId(documents[0].id);
+    if (focusedMenuItem == null) {
+      setFocusedMenuItem("new-document");
     }
-  }, [documents, focusedDocumentId, setFocusedDocumentId]);
+  }, [focusedMenuItem, setFocusedMenuItem]);
 
   useEffect(() => {
-    if (focusedDocumentId && !documents.find((doc) => doc.id === focusedDocumentId)) {
-      setFocusedDocumentId(documents.length > 0 ? documents[0].id : null);
+    if (focusedMenuItem && !menuItems.find((item) => item === focusedMenuItem)) {
+      setFocusedMenuItem(documents.length > 0 ? documents[0].id : null);
     }
-  }, [documents, focusedDocumentId, setFocusedDocumentId]);
-
+  }, [menuItems, focusedMenuItem, setFocusedMenuItem]);
   const handleKeyDown = (event: KeyboardEvent) => {
+    const allItems = ["new-document", ...documents.map((doc) => doc.id)];
     if (event.key === "ArrowDown") {
-      const currentIndex = documents.findIndex((doc) => doc.id === focusedDocumentId);
-      const nextIndex = (currentIndex + 1) % documents.length;
-      setFocusedDocumentId(documents[nextIndex].id);
+      const currentIndex = allItems.findIndex((item) => item === focusedMenuItem);
+      const nextIndex = (currentIndex + 1) % allItems.length;
+      setFocusedMenuItem(allItems[nextIndex]);
     } else if (event.key === "ArrowUp") {
-      const currentIndex = documents.findIndex((doc) => doc.id === focusedDocumentId);
-      const prevIndex = (currentIndex - 1 + documents.length) % documents.length;
-      setFocusedDocumentId(documents[prevIndex].id);
+      const currentIndex = allItems.findIndex((item) => item === focusedMenuItem);
+      const prevIndex = (currentIndex - 1 + allItems.length) % allItems.length;
+      setFocusedMenuItem(allItems[prevIndex]);
     }
   };
 
@@ -107,7 +119,7 @@ const useDocumentFocus = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [documents, focusedDocumentId, setFocusedDocumentId]);
+  }, [documents, focusedMenuItem, setFocusedMenuItem]);
 };
 
 const useVisibleDocuments = () => {

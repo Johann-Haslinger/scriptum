@@ -5,8 +5,8 @@ type CommandMenuUIStore = {
   setIsCommandMenuOpen: (isOpen: boolean) => void;
   searchQuery: string;
   setSearchQuery: (value: string) => void;
-  focusedDocumentId: string | null;
-  setFocusedDocumentId: (id: string | null) => void;
+  focusedMenuItem: string | null;
+  setFocusedMenuItem: (item: string | null) => void;
 };
 
 export const useCommandMenuUIStore = create<CommandMenuUIStore>((set) => ({
@@ -14,6 +14,6 @@ export const useCommandMenuUIStore = create<CommandMenuUIStore>((set) => ({
   setIsCommandMenuOpen: (isOpen) => set({ isCommandMenuOpen: isOpen }),
   searchQuery: "",
   setSearchQuery: (value) => set({ searchQuery: value }),
-  focusedDocumentId: null,
-  setFocusedDocumentId: (id) => set({ focusedDocumentId: id }),
+  focusedMenuItem: null,
+  setFocusedMenuItem: (item) => set({ focusedMenuItem: item }),
 }));

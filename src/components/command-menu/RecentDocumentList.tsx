@@ -1,6 +1,7 @@
 import { compareDesc, format, isToday, isYesterday, parseISO } from "date-fns";
 import { useDocumentsStore } from "../../store";
 import { Document } from "../../types";
+import AddDocumentButton from "./AddDocumentButton";
 import DocumentItem from "./DocumentItem";
 
 const RecentDocumentList = () => {
@@ -9,9 +10,11 @@ const RecentDocumentList = () => {
 
   return (
     <ul className="px-4 pb-4 w-full">
+      <AddDocumentButton />
+
       {Object.entries(groupedDocs).map(([date, docs]) => (
-        <div key={date} className="mt-4">
-          <div className="text-sm text-white/30 mb-1 font-semibold">{date}</div>
+        <div key={date} className="mt-1">
+          <div className="text-sm text-white/30 mb-1 pl-3 font-semibold">{date}</div>
           <ul>
             {docs.map((doc) => (
               <DocumentItem key={doc.id} document={doc} />

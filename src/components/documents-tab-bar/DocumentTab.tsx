@@ -73,7 +73,7 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
             </div>
           )}
         </AnimatePresence>
-        <p className="font-medium  line-clamp-1">{name}</p>
+        <p className="font-medium  line-clamp-1">{name || "Untitled"}</p>
       </motion.div>
     </div>
   );

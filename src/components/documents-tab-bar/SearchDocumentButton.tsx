@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
+import { Command } from "lucide-react";
 import { IoSearch } from "react-icons/io5";
-import { Tooltip } from "react-tooltip";
 import { useCommandMenuUIStore } from "../../store";
+import { Tooltip } from "../tooltip";
 
 const SearchDocumentButton = () => {
   const { setIsCommandMenuOpen } = useCommandMenuUIStore();
@@ -18,7 +19,7 @@ const SearchDocumentButton = () => {
       >
         <IoSearch />
       </motion.button>
-      <Tooltip place="right" id="open-new-document">
+      <Tooltip shortcut={[<Command size={12} />, "K"]} place="right-end" id="open-new-document">
         Search document
       </Tooltip>
     </div>

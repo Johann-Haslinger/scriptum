@@ -105,7 +105,7 @@ const useDocumentsNavigation = () => {
           } else {
             setCurrentDocument(rootDocumentId);
           }
-          setDocumentOpen(currentDocumentId, false);
+          currentDocumentId && setDocumentOpen(currentDocumentId, false);
         }
       }
     };

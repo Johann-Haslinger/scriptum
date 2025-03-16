@@ -3,7 +3,12 @@ import { IoClose } from "react-icons/io5";
 import { useCommandMenuUIStore, useDocumentsStore } from "../../store";
 
 const CommandMenuInput = () => {
-  const { searchQuery, setSearchQuery, focusedDocumentId, setIsCommandMenuOpen } = useCommandMenuUIStore();
+  const {
+    searchQuery,
+    setSearchQuery,
+    focusedMenuItem: focusedDocumentId,
+    setIsCommandMenuOpen,
+  } = useCommandMenuUIStore();
   const focusedDocumentName = useDocumentsStore((state) => {
     const doc = state.documents.find((doc) => doc.id === focusedDocumentId);
     return doc?.name;

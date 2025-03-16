@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 
 interface TooltipProps extends PropsWithChildren {
@@ -16,9 +16,10 @@ interface TooltipProps extends PropsWithChildren {
     | "left-start"
     | "left-end";
   id: string;
+  shortcut?: ReactNode[];
 }
 
-const Tooltip = ({ children, place = "top", id }: TooltipProps) => {
+const Tooltip = ({ children, place = "top", id, shortcut }: TooltipProps) => {
   const tooltipStyle = {
     backgroundColor: "rgba(23, 23, 23)",
     borderRadius: "10px",
@@ -29,7 +30,16 @@ const Tooltip = ({ children, place = "top", id }: TooltipProps) => {
 
   return (
     <ReactTooltip className="outline bg-white/[0.5] outline-white/15" style={tooltipStyle} place={place} id={id}>
-      {children}
+      <div className="flex flex-col items-center">
+        <p className="font-medium">{children}</p>
+        {shortcut && (
+          <div className="flex space-x-1 items-center opacity-60">
+            {shortcut.map((symbol) => (
+              <div>{symbol} </div>
+            ))}
+          </div>
+        )}
+      </div>
     </ReactTooltip>
   );
 };

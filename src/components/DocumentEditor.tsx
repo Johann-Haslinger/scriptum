@@ -11,7 +11,7 @@ const DocumentEditor = ({ document }: { document: Document }) => {
   return (
     <RubberBandSelector blocksAreaRef={blocksAreaRef}>
       <BlockAreaWrapper>
-        <p className="text-3xl font-extrabold mb-6 px-8">{name}</p>
+        <p className="text-3xl font-extrabold mb-6 px-8">{name || "Untitled"}</p>
         <BlocksRenderer blocksAreaRef={blocksAreaRef} documentId={id} />
       </BlockAreaWrapper>
     </RubberBandSelector>
