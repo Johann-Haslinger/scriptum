@@ -3,16 +3,13 @@ import { create } from "zustand";
 type DocumentsUIStore = {
   openDocumentIds: Record<string, boolean>;
   setDocumentOpen: (documentId: string, value: boolean) => void;
-  currentDocumentId: string;
+  currentDocumentId: string | null;
   setCurrentDocument: (documentId: string) => void;
 };
 
 export const useDocumentsUIStore = create<DocumentsUIStore>((set) => {
   return {
-    openDocumentIds: {
-      "2": true,
-      "3": true,
-    },
+    openDocumentIds: {},
     setDocumentOpen: (documentId, value) => {
       set((state) => {
         const openDocumentIds = { ...state.openDocumentIds };
@@ -20,7 +17,7 @@ export const useDocumentsUIStore = create<DocumentsUIStore>((set) => {
         return { openDocumentIds };
       });
     },
-    currentDocumentId: "1",
+    currentDocumentId: null,
     setCurrentDocument: (documentId) => {
       set(() => {
         const currentDocumentId = documentId;
