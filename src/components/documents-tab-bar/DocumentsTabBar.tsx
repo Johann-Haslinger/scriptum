@@ -60,10 +60,11 @@ const useDocumentsNavigation = () => {
   const openDocuments = useOpenDocuments();
   const { rootDocumentId, isRootDocumentCurrent } = useRootDocument();
   const blockEditorState = useBlockEditorState();
+  const isCommandMenuOpen = useCommandMenuUIStore((state) => state.isCommandMenuOpen);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (blockEditorState !== BlockEditorState.VIEWING) return;
+      if (blockEditorState !== BlockEditorState.VIEWING || isCommandMenuOpen) return;
 
       if (e.key === "Escape" && currentDocumentId !== rootDocumentId) {
         setCurrentDocument(rootDocumentId);
@@ -119,5 +120,6 @@ const useDocumentsNavigation = () => {
     isRootDocumentCurrent,
     openDocuments,
     setDocumentOpen,
+    isCommandMenuOpen,
   ]);
 };

@@ -1,10 +1,14 @@
-import { useBlockEditorState, useBlockSelectionByKeyPress, useDisableZoomAndScrollOnTouch } from "@/hooks";
-import { useOpenRootDocument } from "../hooks/useOpenRootDocumentInitially";
+import {
+  useBlockEditorState,
+  useBlockSelectionByKeyPress,
+  useDisableZoomAndScrollOnTouch,
+  useOpenRootDocument,
+} from "@/hooks";
 import { useDocumentsStore, useDocumentsUIStore } from "../store";
 import { BlockEditorState } from "../types";
-import CommandMenu from "./CommandMenu";
+import { CommandMenu } from "./command-menu";
 import DocumentEditor from "./DocumentEditor";
-import DocumentsTabBar from "./documents-tab-bar/DocumentsTabBar";
+import { DocumentsTabBar } from "./documents-tab-bar";
 import { EditBlocksMenu } from "./edit-blocks-menu";
 
 export default function BlockEditor() {

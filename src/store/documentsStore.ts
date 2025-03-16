@@ -12,7 +12,7 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
   const initialDocuments: Document[] = [
     {
       id: "1",
-      name: "Project Alpha",
+      name: "Home",
       type: "root",
       updatedAt: new Date().toISOString(),
     },

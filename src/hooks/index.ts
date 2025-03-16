@@ -6,3 +6,4 @@ export * from "./useIsDarkModeActive";
 export * from "./useOutsideClick";
 export * from "./useRootDocument";
 export * from "./useSelectedBlocks";
+export * from "./useOpenRootDocumentInitially";
