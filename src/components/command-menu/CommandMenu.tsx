@@ -37,7 +37,7 @@ const useSearchQueryReset = () => {
   const { isCommandMenuOpen, setSearchQuery } = useCommandMenuUIStore();
 
   useEffect(() => {
-    if (!isCommandMenuOpen) setSearchQuery("");
+    if (isCommandMenuOpen) setSearchQuery("");
   }, [isCommandMenuOpen, setSearchQuery]);
 };
 
@@ -85,7 +85,7 @@ const useDocumentFocus = () => {
   const menuItems = ["new-document", ...documents.map((doc) => doc.id)];
 
   useEffect(() => {
-    if (!isCommandMenuOpen) {
+    if (isCommandMenuOpen) {
       setFocusedMenuItem(null);
     }
   }, [isCommandMenuOpen, setFocusedMenuItem]);

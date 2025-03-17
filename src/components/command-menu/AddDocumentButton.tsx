@@ -13,10 +13,10 @@ const AddDocumentButton = () => {
       } flex mb-4 cursor-pointer justify-between w-full px-3 mt-2 py-2.5`}
     >
       <div className="flex items-center space-x-2">
-        <Plus className="opacity-80" size={18} /> <p>New document</p>
+        <Plus className="opacity-70" size={18} /> <p>New document</p>
       </div>
       {isFocused && (
-        <div className="p-1 text-white/80">
+        <div className="p-1 text-white/50">
           <CornerDownLeft size={16} />
         </div>
       )}

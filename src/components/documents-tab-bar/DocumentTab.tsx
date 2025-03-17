@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { IoClose } from "react-icons/io5";
-import { Tooltip } from "react-tooltip";
-import { useRootDocument } from "../../hooks";
+import { useOpenDocuments, useRootDocument } from "../../hooks";
 import { useDocumentsUIStore } from "../../store";
 import { Document } from "../../types";
+import { Tooltip } from "../tooltip";
 
 const DocumentTab = ({ document, index }: { document: Document; index: number }) => {
   const { id, name } = document;
@@ -13,10 +13,19 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
   const isCurrent = currentDocumentId === id;
   const [isHovered, setIsHovered] = useState(false);
   const isCloseIconVisible = isHovered || isCurrent;
+  const openDocuments = useOpenDocuments();
 
   const setDocumentCurrent = () => setCurrentDocument(id);
   const closeDocument = () => {
-    if (isCurrent) setCurrentDocument(rootDocumentId);
+    const currentDocumentIndex = openDocuments.findIndex((doc) => doc.id === currentDocumentId);
+
+    if (isCurrent) {
+      if (currentDocumentIndex > 0) {
+        setCurrentDocument(openDocuments[currentDocumentIndex - 1].id);
+      } else {
+        setCurrentDocument(rootDocumentId);
+      }
+    }
     setDocumentOpen(id, false);
   };
 

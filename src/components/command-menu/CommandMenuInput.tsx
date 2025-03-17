@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 import { useCommandMenuUIStore, useDocumentsStore } from "../../store";
+import { Tooltip } from "../tooltip";
 
 const CommandMenuInput = () => {
   const {
@@ -25,7 +26,7 @@ const CommandMenuInput = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full outline-none placeholder:text-white/30"
-          placeholder="Type a command or search..."
+          placeholder="Search for a document..."
         />
         {focusedDocumentName && searchQuery.length > 0 && (
           <div className="absolute top-[20px] flex line-clamp-1 left-0 px-6">
@@ -39,13 +40,17 @@ const CommandMenuInput = () => {
         )}
       </div>
       {searchQuery.length > 0 && (
-        <button
-          onClick={() => setIsCommandMenuOpen(false)}
-          onMouseDown={(e) => e.preventDefault()}
-          className="focus:outline-2 cursor-pointer hover:bg-white/30 active:bg-white-10 transition-all outline-blue-500/40 outline-offset-1 bg-white/20 text-black/60 rounded-full p-1 flex justify-between"
-        >
-          <IoClose />
-        </button>
+        <div>
+          <button
+            data-tooltip-id="close-command-menu"
+            onClick={() => setIsCommandMenuOpen(false)}
+            onMouseDown={(e) => e.preventDefault()}
+            className="focus:outline-2 cursor-pointer hover:bg-white/30 active:bg-white-10 transition-all outline-blue-500/40 outline-offset-1 bg-white/20 text-black/60 rounded-full p-1 flex justify-between"
+          >
+            <IoClose />
+          </button>
+          <Tooltip place="right" id="close-command-menu">Close</Tooltip>
+        </div>
       )}
     </div>
   );

@@ -36,11 +36,11 @@ const DocumentItem = ({ document }: { document: Document }) => {
       className={`${isFocused && "bg-white/5 rounded-xl"} flex cursor-pointer justify-between w-full px-3 py-2.5`}
     >
       <div className="flex items-center space-x-3">
-        <File className="opacity-80" size={18} />
+        <File className="opacity-70" size={18} />
         <p>{searchQuery.length == 0 ? name || "Untitled" : highlightedName}</p>
       </div>
       {isFocused && (
-        <div className="p-1 text-white/80">
+        <div className="p-1 text-white/50">
           <CornerDownLeft size={16} />
         </div>
       )}

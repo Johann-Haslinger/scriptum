@@ -29,7 +29,7 @@ const Tooltip = ({ children, place = "top", id, shortcut }: TooltipProps) => {
   };
 
   return (
-    <ReactTooltip className="outline bg-white/[0.5] outline-white/15" style={tooltipStyle} place={place} id={id}>
+    <ReactTooltip className="outline bg-white/[0.5] shadow-xl outline-[#333333]" style={tooltipStyle} place={place} id={id}>
       <div className="flex flex-col items-center">
         <p className="font-medium">{children}</p>
         {shortcut && (

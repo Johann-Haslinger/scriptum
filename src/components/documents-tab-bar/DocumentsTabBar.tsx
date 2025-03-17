@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
-import { useBlockEditorState, useRootDocument } from "../../hooks";
-import { useCommandMenuUIStore, useDocumentsStore, useDocumentsUIStore } from "../../store";
+import { useBlockEditorState, useOpenDocuments, useRootDocument } from "../../hooks";
+import { useCommandMenuUIStore, useDocumentsUIStore } from "../../store";
 import { BlockEditorState } from "../../types";
 import DocumentTab from "./DocumentTab";
 import RootDocumentTab from "./RootDocumentTab";
@@ -34,6 +34,7 @@ const DocumentsTabBar = () => {
             <div className="flex ml-2 space-x-2">
               {openDocuments
                 .filter((doc) => doc.type !== "root")
+                .slice(Math.max(openDocuments.length - 7, 0), openDocuments.length)
                 .map((doc, idx) => (
                   <DocumentTab index={idx} document={doc} key={doc.id} />
                 ))}
@@ -47,13 +48,6 @@ const DocumentsTabBar = () => {
 };
 
 export default DocumentsTabBar;
-
-const useOpenDocuments = () => {
-  const openDocumentIds = useDocumentsUIStore((state) => state.openDocumentIds);
-  const documents = useDocumentsStore((state) => state.documents);
-
-  return documents.filter((doc) => openDocumentIds[doc.id]);
-};
 
 const useDocumentsNavigation = () => {
   const { currentDocumentId, setCurrentDocument, setDocumentOpen } = useDocumentsUIStore();
