@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import supabaseClient from "../lib/supabase";
-import { Document } from "../types";
+import { Document, SupabaseTable } from "../types";
 import { toCamelCase, toSnakeCase } from "../utils";
 
 type DocumentsStore = {
@@ -8,32 +8,58 @@ type DocumentsStore = {
   addDocument: (document: Document) => void;
   removeDocument: (documentId: string) => void;
   updateDocument: (document: Document) => void;
-  initialize: (userId: string) => Promise<void>;
+  loadRootDocument: (userId: string) => Promise<void>;
+  loadRecentDocuments: () => Promise<void>;
+
 };
 
 export const useDocumentsStore = create<DocumentsStore>((set) => {
   return {
     documents: [],
-    addDocument: (document) => {
+    addDocument: async (document) => {
+      const { error } = await supabaseClient.from(SupabaseTable.DOCUMENTS).insert(toSnakeCase(document));
+
+      if (error) {
+        console.error("Error inserting document", error);
+        return;
+      }
+
       set((state) => {
         const documents = [...state.documents, document];
+
         return { documents };
       });
     },
-    removeDocument: (documentId) => {
+    removeDocument: async (documentId) => {
+      const { error } = await supabaseClient.from(SupabaseTable.DOCUMENTS).delete().eq("id", documentId);
+
+      if (error) {
+        console.error("Error deleting document", error);
+        return;
+      }
+
       set((state) => {
         const documents = state.documents.filter((doc) => doc.id !== documentId);
         return { documents };
       });
     },
-    updateDocument: (document) => {
+    updateDocument: async (document) => {
+      const { error } = await supabaseClient
+        .from(SupabaseTable.DOCUMENTS)
+        .update(toSnakeCase(document))
+        .eq("id", document.id);
+
+      if (error) {
+        console.error("Error updating document", error);
+        return;
+      }
+
       set((state) => {
         const documents = state.documents.map((doc) => (doc.id === document.id ? document : doc));
         return { documents };
       });
     },
-    initialize: async (userId: string) => {
-      console.log("Initializing documents store");
+    loadRootDocument: async (userId: string) => {
       const { data, error } = await supabaseClient.from("documents").select("*").eq("type", "root").single();
 
       if (error) console.error("Error fetching root document", error);
@@ -65,5 +91,25 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
 
       if (data) set({ documents: [toCamelCase(data) as Document] });
     },
+    loadRecentDocuments: async () => {
+      const { data, error } = await supabaseClient
+        .from(SupabaseTable.DOCUMENTS)
+        .select("*")
+        .gte("updated_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+        .order("updated_at", { ascending: false });
+
+        console.log(data);
+
+      if (error) {
+        console.error("Error fetching recent documents", error);
+        return;
+      }
+
+      if (data) {
+        const documents = data.map((doc) => toCamelCase(doc) as Document);
+        set({ documents });
+      }
+    }
+
   };
 });

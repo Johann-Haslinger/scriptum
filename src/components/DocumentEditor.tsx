@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { useDocumentsStore } from "../store";
 import { Document } from "../types";
 import { BlocksRenderer } from "./blocks-renderer";
 import { BlockAreaWrapper } from "./edit-blocks-menu";
@@ -7,6 +8,8 @@ import { RubberBandSelector } from "./RubberBandSelector";
 const DocumentEditor = ({ document }: { document: Document }) => {
   const { id, name } = document;
   const blocksAreaRef = useRef<HTMLDivElement | null>(null);
+
+  useUpdateDocumentTimestamp(document);
 
   return (
     <RubberBandSelector blocksAreaRef={blocksAreaRef}>
@@ -19,3 +22,11 @@ const DocumentEditor = ({ document }: { document: Document }) => {
 };
 
 export default DocumentEditor;
+
+export const useUpdateDocumentTimestamp = (document: Document) => {
+  const { updateDocument } = useDocumentsStore();
+
+  useEffect(() => {
+    updateDocument({ ...document, updatedAt: new Date().toISOString() });
+  }, [document, updateDocument]);
+};

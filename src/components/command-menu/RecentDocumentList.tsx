@@ -37,7 +37,7 @@ const groupAndSortDocuments = (documents: Document[]) => {
 
     if (isToday(date)) key = "Today";
     else if (isYesterday(date)) key = "Yesterday";
-    else if (date.getMonth() === new Date().getMonth() - 1) key = "Last 30 days";
+    else if (date > new Date(new Date().setDate(new Date().getDate() - 30))) key = "Last 30 days";
     else return groups;
 
     if (!groups[key]) groups[key] = [];

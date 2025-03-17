@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDocumentsStore, useDocumentsUIStore, useUserStore } from "../store";
 
 export const useOpenRootDocument = () => {
-  const { documents, initialize } = useDocumentsStore();
+  const { documents, loadRootDocument, loadRecentDocuments } = useDocumentsStore();
   const { setCurrentDocument, currentDocumentId } = useDocumentsUIStore();
   const { isUserLoggedIn, userId } = useUserStore();
 
@@ -13,6 +13,9 @@ export const useOpenRootDocument = () => {
   }, [documents.length, currentDocumentId, setCurrentDocument]);
 
   useEffect(() => {
-    if (isUserLoggedIn && userId) initialize(userId);
+    if (isUserLoggedIn && userId) {
+      loadRootDocument(userId);
+      loadRecentDocuments();
+    }
   }, [isUserLoggedIn, userId]);
 };

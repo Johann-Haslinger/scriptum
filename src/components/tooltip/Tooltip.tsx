@@ -34,8 +34,8 @@ const Tooltip = ({ children, place = "top", id, shortcut }: TooltipProps) => {
         <p className="font-medium">{children}</p>
         {shortcut && (
           <div className="flex space-x-1 items-center opacity-60">
-            {shortcut.map((symbol) => (
-              <div>{symbol} </div>
+            {shortcut.map((symbol, idx) => (
+              <div key={idx}>{symbol} </div>
             ))}
           </div>
         )}
