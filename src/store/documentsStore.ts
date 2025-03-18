@@ -10,7 +10,6 @@ type DocumentsStore = {
   updateDocument: (document: Document) => void;
   loadRootDocument: (userId: string) => Promise<void>;
   loadRecentDocuments: () => Promise<void>;
-
 };
 
 export const useDocumentsStore = create<DocumentsStore>((set) => {
@@ -44,6 +43,7 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
       });
     },
     updateDocument: async (document) => {
+      console.log("Updating document", document);
       const { error } = await supabaseClient
         .from(SupabaseTable.DOCUMENTS)
         .update(toSnakeCase(document))
@@ -98,8 +98,6 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
         .gte("updated_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
         .order("updated_at", { ascending: false });
 
-        console.log(data);
-
       if (error) {
         console.error("Error fetching recent documents", error);
         return;
@@ -109,7 +107,6 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
         const documents = data.map((doc) => toCamelCase(doc) as Document);
         set({ documents });
       }
-    }
-
+    },
   };
 });

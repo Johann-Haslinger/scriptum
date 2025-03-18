@@ -33,15 +33,16 @@ const DocumentItem = ({ document }: { document: Document }) => {
       onMouseEnter={() => {
         if (hasMouseMoved) setFocusedMenuItem(id);
       }}
-      className={`${isFocused && "bg-white/5 rounded-xl"} flex cursor-pointer justify-between w-full px-3 py-2.5`}
+      className={`${isFocused && "bg-white/5 rounded-xl"} flex h-12 cursor-pointer justify-between w-full pl-3 p-2.5`}
     >
       <div className="flex items-center space-x-3">
         <File className="opacity-70" size={18} />
         <p>{searchQuery.length == 0 ? name || "Untitled" : highlightedName}</p>
       </div>
       {isFocused && (
-        <div className="p-1 text-white/50">
-          <CornerDownLeft size={16} />
+        <div className="flex text-sm opacity-50 items-center space-x-2 bg-black/20 rounded-lg  py-1 px-4 outline outline-white/10">
+          <CornerDownLeft size={14} />
+          <p>Enter</p>
         </div>
       )}
     </div>
