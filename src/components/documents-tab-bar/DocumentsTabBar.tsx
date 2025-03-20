@@ -74,20 +74,24 @@ const useDocumentsNavigation = () => {
         }
       });
 
+      if (openDocuments.length === 0) return;
+
       const currentDocumentIndex = openDocuments.findIndex((doc) => doc.id === currentDocumentId);
       if (e.key === "ArrowLeft" && e.metaKey) {
         if (currentDocumentIndex > 0) {
-          setCurrentDocument(openDocuments[currentDocumentIndex - 1].id);
+          setCurrentDocument(openDocuments[currentDocumentIndex - 1]?.id);
         } else if (isRootDocumentCurrent) {
-          setCurrentDocument(openDocuments[openDocuments.length - 1].id);
+          setCurrentDocument(openDocuments[openDocuments.length - 1]?.id);
         } else {
           setCurrentDocument(rootDocumentId);
         }
       } else if (e.key === "ArrowRight" && e.metaKey) {
-        if (currentDocumentIndex < openDocuments.length - 1) {
+        if (currentDocumentIndex >= 0 && currentDocumentIndex < openDocuments.length - 1) {
           setCurrentDocument(openDocuments[currentDocumentIndex + 1].id);
-        } else {
+        } else if (currentDocumentIndex === openDocuments.length - 1) {
           setCurrentDocument(rootDocumentId);
+        } else if (isRootDocumentCurrent) {
+          setCurrentDocument(openDocuments[0]?.id || rootDocumentId);
         }
       } else if (e.key === "Backspace" && e.metaKey) {
         if (e.shiftKey) {
@@ -95,11 +99,11 @@ const useDocumentsNavigation = () => {
           setCurrentDocument(rootDocumentId);
         } else if (currentDocumentId !== rootDocumentId) {
           if (currentDocumentIndex > 0) {
-            setCurrentDocument(openDocuments[currentDocumentIndex - 1].id);
+            setCurrentDocument(openDocuments[currentDocumentIndex - 1]?.id);
           } else {
             setCurrentDocument(rootDocumentId);
           }
-          currentDocumentId && setDocumentOpen(currentDocumentId, false);
+          if (currentDocumentId) setDocumentOpen(currentDocumentId, false);
         }
       }
     };

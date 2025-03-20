@@ -19,7 +19,7 @@ const SearchDocumentButton = () => {
       >
         <IoSearch size={18} />
       </motion.button>
-      <Tooltip shortcut={[<Command size={12} />, "K"]} place="right-end" id="open-new-document">
+      <Tooltip shortcut={[<Command key={1} size={12} />, <p key={2}>K</p>]} place="right-end" id="open-new-document">
         Search document
       </Tooltip>
     </div>

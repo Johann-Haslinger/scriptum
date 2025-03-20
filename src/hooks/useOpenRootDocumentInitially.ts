@@ -10,12 +10,12 @@ export const useOpenRootDocument = () => {
     if (documents.length > 0 && currentDocumentId === null) {
       setCurrentDocument(documents.find((doc) => doc.type === "root")?.id || documents[0].id);
     }
-  }, [documents.length, currentDocumentId, setCurrentDocument]);
+  }, [documents, currentDocumentId, setCurrentDocument]);
 
   useEffect(() => {
     if (isUserLoggedIn && userId) {
       loadRootDocument(userId);
       loadRecentDocuments();
     }
-  }, [isUserLoggedIn, userId]);
+  }, [isUserLoggedIn, userId, loadRecentDocuments, loadRootDocument]);
 };

@@ -105,7 +105,7 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
 
       if (data) {
         const documents = data.map((doc) => toCamelCase(doc) as Document);
-        set({ documents });
+        set({ documents: documents.map((doc) => ({ ...doc, name: doc.name || "" })) });
       }
     },
   };

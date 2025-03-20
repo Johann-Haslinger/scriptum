@@ -13,7 +13,7 @@ export const useAuthManager = () => {
         setUserEmail(session.user.email || null);
       } else {
         setIsUserLoggedIn(false);
-        setUserId(null);
+        setUserId("");
         setUserEmail(null);
       }
     });
@@ -21,5 +21,5 @@ export const useAuthManager = () => {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [setIsUserLoggedIn, setUserId, setUserEmail]);
 };

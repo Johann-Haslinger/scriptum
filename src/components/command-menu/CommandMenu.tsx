@@ -58,6 +58,8 @@ const useCommandMenuKeyboardNavigation = () => {
       if (event.key === "Escape") {
         setIsCommandMenuOpen(false);
       } else if (event.key === "Enter" && focusedMenuItem) {
+        event.preventDefault();
+
         if (focusedMenuItem === "new-document") {
           const newDoc = newDocument(userId);
           addDocument(newDoc);
@@ -76,13 +78,20 @@ const useCommandMenuKeyboardNavigation = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isCommandMenuOpen, setIsCommandMenuOpen, focusedMenuItem, setCurrentDocument, addDocument]);
+  }, [
+    isCommandMenuOpen,
+    setIsCommandMenuOpen,
+    focusedMenuItem,
+    setCurrentDocument,
+    addDocument,
+    setDocumentOpen,
+    userId,
+  ]);
 };
 
 const useDocumentFocus = () => {
   const { focusedMenuItem, setFocusedMenuItem, isCommandMenuOpen } = useCommandMenuUIStore();
   const documents = useVisibleDocuments();
-  const menuItems = ["new-document", ...documents.map((doc) => doc.id)];
 
   useEffect(() => {
     if (isCommandMenuOpen) {
@@ -97,29 +106,32 @@ const useDocumentFocus = () => {
   }, [focusedMenuItem, setFocusedMenuItem]);
 
   useEffect(() => {
+    const menuItems = ["new-document", ...documents.map((doc) => doc.id)];
+
     if (focusedMenuItem && !menuItems.find((item) => item === focusedMenuItem)) {
       setFocusedMenuItem(documents.length > 0 ? documents[0].id : null);
     }
-  }, [menuItems, focusedMenuItem, setFocusedMenuItem]);
-  const handleKeyDown = (event: KeyboardEvent) => {
-    const allItems = ["new-document", ...documents.map((doc) => doc.id)];
-    if (event.key === "ArrowDown") {
-      const currentIndex = allItems.findIndex((item) => item === focusedMenuItem);
-      const nextIndex = (currentIndex + 1) % allItems.length;
-      setFocusedMenuItem(allItems[nextIndex]);
-    } else if (event.key === "ArrowUp") {
-      const currentIndex = allItems.findIndex((item) => item === focusedMenuItem);
-      const prevIndex = (currentIndex - 1 + allItems.length) % allItems.length;
-      setFocusedMenuItem(allItems[prevIndex]);
-    }
-  };
+  }, [documents, focusedMenuItem, setFocusedMenuItem]);
 
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const allItems = ["new-document", ...documents.map((doc) => doc.id)];
+      if (event.key === "ArrowDown") {
+        const currentIndex = allItems.findIndex((item) => item === focusedMenuItem);
+        const nextIndex = (currentIndex + 1) % allItems.length;
+        setFocusedMenuItem(allItems[nextIndex]);
+      } else if (event.key === "ArrowUp") {
+        const currentIndex = allItems.findIndex((item) => item === focusedMenuItem);
+        const prevIndex = (currentIndex - 1 + allItems.length) % allItems.length;
+        setFocusedMenuItem(allItems[prevIndex]);
+      }
+    };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [documents, focusedMenuItem, setFocusedMenuItem]);
+  }, [documents, focusedMenuItem, setFocusedMenuItem, documents, setFocusedMenuItem]);
 };
 
 const useVisibleDocuments = () => {

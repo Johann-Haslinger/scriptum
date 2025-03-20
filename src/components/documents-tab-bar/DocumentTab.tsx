@@ -14,6 +14,7 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
   const [isHovered, setIsHovered] = useState(false);
   const isCloseIconVisible = isHovered || isCurrent;
   const openDocuments = useOpenDocuments();
+  const isPlaceholderVisible = !name.trim();
 
   const setDocumentCurrent = () => setCurrentDocument(id);
   const closeDocument = () => {
@@ -82,7 +83,7 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
             </div>
           )}
         </AnimatePresence>
-        <p className="font-medium  line-clamp-1">{name || "Untitled"}</p>
+        <p className="font-medium  line-clamp-1">{isPlaceholderVisible ? "Untitled" : name}</p>
       </motion.div>
     </div>
   );

@@ -14,6 +14,7 @@ const DocumentItem = ({ document }: { document: Document }) => {
   const hasMouseMoved = useHasMouseMoved();
   const { setCurrentDocument, setDocumentOpen } = useDocumentsUIStore();
   const isFocused = focusedDocumentId === id;
+  const isPlaceholderVisible = !name.trim();
 
   const openDocument = () => {
     setCurrentDocument(id);
@@ -37,7 +38,7 @@ const DocumentItem = ({ document }: { document: Document }) => {
     >
       <div className="flex items-center space-x-3">
         <File className="opacity-70" size={18} />
-        <p>{searchQuery.length == 0 ? name || "Untitled" : highlightedName}</p>
+        <p>{!searchQuery ? (isPlaceholderVisible ? "Untitled" : name) : highlightedName}</p>
       </div>
       {isFocused && (
         <div className="flex text-sm opacity-50 items-center space-x-2 bg-black/20 rounded-lg  py-1 px-4 outline outline-white/10">

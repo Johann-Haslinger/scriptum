@@ -25,43 +25,52 @@ export default DocumentEditor;
 
 export const useUpdateDocumentTimestamp = (document: Document) => {
   const { updateDocument } = useDocumentsStore();
+  const hasUpdated = useRef(false);
 
   useEffect(() => {
-    updateDocument({ ...document, updatedAt: new Date().toISOString() });
-  }, []);
+    if (!hasUpdated.current) {
+      updateDocument({ ...document, updatedAt: new Date().toISOString() });
+      hasUpdated.current = true;
+    }
+  }, [document, updateDocument, hasUpdated]);
 };
 
 const DocumentHeader = ({ document }: { document: Document }) => {
-  const { name } = document;
+  const { name, type } = document;
   const { updateDocument } = useDocumentsStore();
-  const ref = useRef<HTMLParagraphElement>(null);
+  const ref = useRef<HTMLTextAreaElement>(null);
   const [currentValue, setCurrentValue] = useState(name || "");
-
-  const isPlaceholderVisible = !currentValue.trim();
+  const isRootDocument = type === "root";
 
   const updateDocumentName = () => {
-    if (currentValue.trim() !== name) {
-      updateDocument({ ...document, name: currentValue });
+    if (currentValue.trim() && currentValue.trim() !== name) {
+      updateDocument({ ...document, name: currentValue.trim() });
     }
   };
 
+  useInitialFocus(ref, !currentValue.trim());
+
   return (
     <div className="flex items-center justify-between px-6 py-4">
-      <p
+      <textarea
         ref={ref}
-        onInput={(e) => setCurrentValue((e.target as HTMLParagraphElement).innerText)}
+        value={currentValue}
+        onChange={(e) => setCurrentValue(e.target.value)}
         onBlur={updateDocumentName}
-        contentEditable
-        suppressContentEditableWarning
-        className={`text-3xl w-full focus:outline-none font-bold relative ${
-          isPlaceholderVisible
-            ? "before:absolute before:text-gray-400 before:opacity-40 before:pointer-events-none before:content-[attr(data-placeholder)] empty:before:block"
-            : ""
+        className={`text-3xl font-bold bg-transparent placeholder:text-white/30 resize-none w-full outline-none ${
+          isRootDocument && "cursor-text"
         }`}
-        data-placeholder="Untitled"
-      >
-        {name}
-      </p>
+        placeholder="Untitled"
+        disabled={isRootDocument}
+      />
     </div>
   );
+};
+
+const useInitialFocus = (ref: React.RefObject<HTMLTextAreaElement | null>, isActive: boolean) => {
+  useEffect(() => {
+    if (ref.current && isActive) {
+      ref.current.focus();
+    }
+  }, [isActive, ref]);
 };

@@ -75,5 +75,5 @@ export const useBlockSelectionByKeyPress = () => {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [blockEditorState, blocks, selectedBlocks, setSelected, selectionDirection]);
+  }, [blockEditorState, blocks, selectedBlocks, setSelected, selectionDirection, selectedBlockIds]);
 };
