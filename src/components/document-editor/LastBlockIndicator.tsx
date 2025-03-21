@@ -16,8 +16,9 @@ const BlockListEndArea = ({ isDropTarget }: { isDropTarget: boolean }) => {
     if (lastBlock && lastBlock.type == BlockType.TEXT && lastBlock.content.trim() == "") {
       return;
     } else if (currentDocumentId) {
+      const newOrder = currentBlocks.length ? currentBlocks[currentBlocks.length - 1].order + 1 : 1;
       const newBlock = createNewBlock(currentDocumentId);
-      addBlock(newBlock);
+      addBlock({ ...newBlock, order: newOrder });
       setFocused(newBlock.id);
     }
   };

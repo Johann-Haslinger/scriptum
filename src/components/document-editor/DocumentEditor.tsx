@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import { useDocumentsStore } from "../../store";
-import { Document } from "../../types";
+import { useBlocksStore, useBlocksUIStore, useDocumentsStore } from "../../store";
+import { Document, TextBlock } from "../../types";
+import { createNewBlock } from "../../utils";
 import { BlockAreaWrapper } from "../edit-blocks-menu";
 import BlocksRenderer from "./BlocksRenderer";
 import DocumentHeader from "./DocumentHeader";
@@ -11,6 +12,7 @@ const DocumentEditor = ({ document }: { document: Document }) => {
   const blocksAreaRef = useRef<HTMLDivElement | null>(null);
 
   useUpdateDocumentTimestamp(document);
+  useAddEmptyBlock(id);
 
   return (
     <RubberBandSelector blocksAreaRef={blocksAreaRef}>
@@ -34,4 +36,20 @@ export const useUpdateDocumentTimestamp = (document: Document) => {
       hasUpdated.current = true;
     }
   }, [document, updateDocument, hasUpdated]);
+};
+
+const useAddEmptyBlock = (documentId: string) => {
+  const { addBlock, blocks } = useBlocksStore();
+  const { setFocused } = useBlocksUIStore();
+  const documentBlocks = blocks.filter((block) => block.documentId === documentId);
+  const hasAddedBlock = useRef(false);
+
+  useEffect(() => {
+    if (documentBlocks.length === 0 && !hasAddedBlock.current) {
+      const block = createNewBlock(documentId);
+      addBlock({ ...block, order: 1, content: "Ich bin ein Block" } as TextBlock);
+      setFocused(block.id);
+      hasAddedBlock.current = true;
+    }
+  }, [documentBlocks.length, documentId, addBlock, setFocused]);
 };
