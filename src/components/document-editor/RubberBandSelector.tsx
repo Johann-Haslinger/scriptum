@@ -1,5 +1,5 @@
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
-import { useBlocksUIStore } from "../store";
+import { useBlocksUIStore } from "../../store";
 
 interface RubberBandSelectorProps extends PropsWithChildren {
   blocksAreaRef: React.RefObject<HTMLDivElement | null>;

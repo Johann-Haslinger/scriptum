@@ -9,7 +9,8 @@ import { useDocumentsStore, useDocumentsUIStore, useUserStore } from "../store";
 import { BlockEditorState } from "../types";
 import { AuthUI } from "./auth-ui";
 import { CommandMenu } from "./command-menu";
-import DocumentEditor from "./DocumentEditor";
+
+import { DocumentEditor } from "./document-editor";
 import { DocumentsTabBar } from "./documents-tab-bar";
 import { EditBlocksMenu } from "./edit-blocks-menu";
 
