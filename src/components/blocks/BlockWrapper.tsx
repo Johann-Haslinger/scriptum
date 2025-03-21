@@ -17,7 +17,7 @@ const BlockWrapper = ({ children, block }: BlockWrapperProps) => {
     <Selectable blockId={id}>
       <div
         data-block-id={id}
-        className={`block min-h-8 px-2 py-1 rounded-lg transition-colors
+        className={`block min-h-8 px-2 py-0.5 rounded-lg transition-colors
           ${isSelected ? "bg-blue-400/20 " : ""} ${
           blockEditorState == BlockEditorState.EDITING_BLOCKS && "select-none"
         }`}
@@ -65,10 +65,6 @@ const Selectable = ({ children, blockId }: SelectableProps) => {
   const handleMouseDown = () => {
     if (blockeditorState === BlockEditorState.EDITING_BLOCKS) {
       toggleIsBlockPressed();
-    } else {
-      timeoutRef.current = setTimeout(() => {
-        toggleIsBlockPressed();
-      }, 500);
     }
   };
 

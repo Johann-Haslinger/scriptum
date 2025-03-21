@@ -26,10 +26,11 @@ const BlockListEndArea = ({ isDropTarget }: { isDropTarget: boolean }) => {
   return (
     <div
       onClick={handleClick}
-      className="h-20 relative"
+      className="h-20 focus:outline-none relative"
       id={"last"}
       ref={setNodeRef}
-      {...{ ...attributes, tabIndex: -1 }}
+      {...attributes}
+      tabIndex={-1}
       aria-describedby="DndDescribedBy-0"
     >
       {isDropTarget && <div className="absolute left-6 right-0 top-[-4px] rounded-full h-1 bg-blue-400/50" />}

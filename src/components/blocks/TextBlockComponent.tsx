@@ -1,12 +1,11 @@
 import { TextBlock } from "@/types";
+import BlockContentEditor from "./BlockContentEditor";
 import BlockWrapper from "./BlockWrapper";
 
 const TextBlockComponent = ({ block }: { block: TextBlock }) => {
-  const { content } = block;
-
   return (
     <BlockWrapper block={block}>
-      <p>{content}</p>
+      <BlockContentEditor block={block} />
     </BlockWrapper>
   );
 };

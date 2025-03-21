@@ -11,6 +11,7 @@ import { AuthUI } from "./auth-ui";
 import { CommandMenu } from "./command-menu";
 
 import { DocumentEditor } from "./document-editor";
+import SelectionControlWrapper from "./document-editor/SelectionControlWrapper";
 import { DocumentsTabBar } from "./documents-tab-bar";
 import { EditBlocksMenu } from "./edit-blocks-menu";
 
@@ -31,7 +32,9 @@ export default function BlockEditor() {
     <div className={`${blockEditorState == BlockEditorState.EDITING_BLOCKS && "select-none"}`}>
       <DocumentsTabBar />
 
-      {documents.map((doc) => doc.id === currentDocumentId && <DocumentEditor key={doc.id} document={doc} />)}
+      <SelectionControlWrapper>
+        {documents.map((doc) => doc.id === currentDocumentId && <DocumentEditor key={doc.id} document={doc} />)}
+      </SelectionControlWrapper>
 
       <EditBlocksMenu />
       <CommandMenu />

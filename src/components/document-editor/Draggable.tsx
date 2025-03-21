@@ -1,6 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { GripVertical } from "lucide-react";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
+import { useSelectedBlocks } from "../../hooks";
 import { useBlocksUIStore } from "../../store";
 import { Block } from "../../types";
 
@@ -22,6 +23,8 @@ const Draggable = ({ children, block, isDropTarget }: DraggableProps) => {
     position: "relative",
     width: "100%",
   };
+
+  useHideDragIcon(setBlockHovered);
 
   return (
     <div
@@ -51,3 +54,12 @@ const Draggable = ({ children, block, isDropTarget }: DraggableProps) => {
 };
 
 export default Draggable;
+
+const useHideDragIcon = (setBlockHovered: (value: boolean) => void) => {
+  const selectedBlocks = useSelectedBlocks();
+  const focusedBlockId = useBlocksUIStore((state) => state.focusedBlockId);
+
+  useEffect(() => {
+    if (selectedBlocks.length <= 1) setBlockHovered(false);
+  }, [focusedBlockId, selectedBlocks, setBlockHovered]);
+};

@@ -2,9 +2,9 @@ import { useBlocksUIStore } from "../store";
 import { BlockEditorState } from "../types/enums";
 
 export const useBlockEditorState = (): BlockEditorState => {
-  const { selectedBlockIds: selectedBlocks, draggingBlocks } = useBlocksUIStore();
+  const { selectedBlockIds, draggingBlocks } = useBlocksUIStore();
 
-  const isSelectingBlocks = Object.values(selectedBlocks).some((isSelected) => isSelected === true);
+  const isSelectingBlocks = Object.values(selectedBlockIds).some((isSelected) => isSelected === true);
   const isDraggingBlocks = Object.values(draggingBlocks).some((isDragging) => isDragging === true);
 
   return isDraggingBlocks

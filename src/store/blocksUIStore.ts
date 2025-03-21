@@ -5,8 +5,8 @@ type BlocksUIStore = {
   setSelected: (blockId: string, value: boolean) => void;
   draggingBlocks: Record<string, boolean>;
   setDragging: (blockId: string, value: boolean) => void;
-  focusedBlockId: string;
-  setFocused: (blockId: string) => void;
+  focusedBlockId: string | null;
+  setFocused: (blockId: string | null) => void;
   dropIndex: number;
   setDropIndex: (index: number) => void;
   isRubberBandSelecting: boolean;

@@ -6,7 +6,7 @@ interface RubberBandSelectorProps extends PropsWithChildren {
 }
 
 export const RubberBandSelector = ({ children, blocksAreaRef }: RubberBandSelectorProps) => {
-  const { setSelected, setIsRubberBandSelecting } = useBlocksUIStore();
+  const { setSelected, setIsRubberBandSelecting, selectedBlockIds } = useBlocksUIStore();
   const [isSelecting, setIsSelecting] = useState(false);
   const [startPos, setStartPos] = useState<{ x: number; y: number } | null>(null);
   const [currentPos, setCurrentPos] = useState<{ x: number; y: number } | null>(null);
@@ -83,7 +83,7 @@ export const RubberBandSelector = ({ children, blocksAreaRef }: RubberBandSelect
             blockId
           ) {
             setSelected(blockId, true);
-          } else if (blockId && !e.shiftKey) {
+          } else if (blockId && !e.shiftKey && selectedBlockIds[blockId]) {
             setSelected(blockId, false);
           }
         });

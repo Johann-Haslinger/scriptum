@@ -12,7 +12,7 @@ const DocumentEditor = ({ document }: { document: Document }) => {
   const blocksAreaRef = useRef<HTMLDivElement | null>(null);
 
   useUpdateDocumentTimestamp(document);
-  useAddEmptyBlock(id);
+  useAddEmptyBlock(document);
 
   return (
     <RubberBandSelector blocksAreaRef={blocksAreaRef}>
@@ -38,18 +38,19 @@ export const useUpdateDocumentTimestamp = (document: Document) => {
   }, [document, updateDocument, hasUpdated]);
 };
 
-const useAddEmptyBlock = (documentId: string) => {
+const useAddEmptyBlock = (document: Document) => {
+  const { id: documentId, name } = document;
   const { addBlock, blocks } = useBlocksStore();
   const { setFocused } = useBlocksUIStore();
   const documentBlocks = blocks.filter((block) => block.documentId === documentId);
   const hasAddedBlock = useRef(false);
 
   useEffect(() => {
-    if (documentBlocks.length === 0 && !hasAddedBlock.current) {
+    if (documentBlocks.length === 0 && !hasAddedBlock.current && name.trim() !== "") {
       const block = createNewBlock(documentId);
       addBlock({ ...block, order: 1, content: "Ich bin ein Block" } as TextBlock);
       setFocused(block.id);
       hasAddedBlock.current = true;
     }
-  }, [documentBlocks.length, documentId, addBlock, setFocused]);
+  }, [documentBlocks.length, documentId, addBlock, setFocused, name]);
 };
