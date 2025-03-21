@@ -1,11 +1,31 @@
 import { useSortable } from "@dnd-kit/sortable";
+import { useCurrentBlocks } from "../../hooks";
+import { useBlocksStore, useBlocksUIStore, useDocumentsUIStore } from "../../store";
+import { BlockType } from "../../types";
+import { createNewBlock } from "../../utils";
 
-const LastBlockIndicator = ({ isDropTarget }: { isDropTarget: boolean }) => {
+const BlockListEndArea = ({ isDropTarget }: { isDropTarget: boolean }) => {
   const { attributes, setNodeRef } = useSortable({ id: "last" });
+  const currentBlocks = useCurrentBlocks();
+  const currentDocumentId = useDocumentsUIStore((state) => state.currentDocumentId);
+  const { addBlock } = useBlocksStore();
+  const { setFocused } = useBlocksUIStore();
+
+  const handleClick = () => {
+    const lastBlock = currentBlocks[currentBlocks.length - 1];
+    if (lastBlock && lastBlock.type == BlockType.TEXT && lastBlock.content.trim() == "") {
+      return;
+    } else if (currentDocumentId) {
+      const newBlock = createNewBlock(currentDocumentId);
+      addBlock(newBlock);
+      setFocused(newBlock.id);
+    }
+  };
 
   return (
     <div
-      className="h-8 relative"
+      onClick={handleClick}
+      className="h-20 relative"
       id={"last"}
       ref={setNodeRef}
       {...{ ...attributes, tabIndex: -1 }}
@@ -16,4 +36,4 @@ const LastBlockIndicator = ({ isDropTarget }: { isDropTarget: boolean }) => {
   );
 };
 
-export default LastBlockIndicator;
+export default BlockListEndArea;

@@ -17,7 +17,7 @@ const BlockWrapper = ({ children, block }: BlockWrapperProps) => {
     <Selectable blockId={id}>
       <div
         data-block-id={id}
-        className={` block px-2 py-1 rounded-lg transition-colors
+        className={`block min-h-8 px-2 py-1 rounded-lg transition-colors
           ${isSelected ? "bg-blue-400/20 " : ""} ${
           blockEditorState == BlockEditorState.EDITING_BLOCKS && "select-none"
         }`}

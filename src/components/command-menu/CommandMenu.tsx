@@ -2,7 +2,7 @@ import { compareDesc, parseISO } from "date-fns";
 import { AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import { useCommandMenuUIStore, useDocumentsStore, useDocumentsUIStore, useUserStore } from "../../store";
-import { newDocument } from "../../utils";
+import { createNewDocument } from "../../utils";
 import BackgroundOverlay from "./BackgroundOverlay";
 import CommandMenuInput from "./CommandMenuInput";
 import CommandMenuWrapper from "./CommandMenuWrapper";
@@ -61,7 +61,7 @@ const useCommandMenuKeyboardNavigation = () => {
         event.preventDefault();
 
         if (focusedMenuItem === "new-document") {
-          const newDoc = newDocument(userId);
+          const newDoc = createNewDocument(userId);
           addDocument(newDoc);
           setCurrentDocument(newDoc.id);
           setDocumentOpen(newDoc.id, true);

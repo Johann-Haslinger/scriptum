@@ -5,7 +5,7 @@ import { useCommandMenuUIStore } from "../../store";
 
 const CommandMenuWrapper = ({ children }: PropsWithChildren) => {
   const commandMenuRef = useRef<HTMLDivElement>(null);
-  const { setIsCommandMenuOpen } = useCommandMenuUIStore();
+  const { setIsCommandMenuOpen, isCommandMenuOpen } = useCommandMenuUIStore();
 
   const commandMenuVariants = {
     hidden: {
@@ -20,7 +20,7 @@ const CommandMenuWrapper = ({ children }: PropsWithChildren) => {
 
   const transition = { type: "spring", duration: 0.4, bounce: 0.15 };
 
-  useOutsideClick(commandMenuRef, () => setIsCommandMenuOpen(false));
+  useOutsideClick(commandMenuRef, () => setIsCommandMenuOpen(false), isCommandMenuOpen);
 
   return (
     <motion.div

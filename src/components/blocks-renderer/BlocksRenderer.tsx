@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import BlockComponentMatcher from "./BlockComponentMatcher";
 import DragAndDropWrapper from "./DragAndDropWrapper";
 import Draggable from "./Draggable";
-import LastBlockIndicator from "./LastBlockIndicator";
+import BlockListEndArea from "./LastBlockIndicator";
 import OutsideClickWrapper from "./OutsideClickWrapper";
 
 interface BlockRendererProps {
@@ -25,7 +25,7 @@ const BlocksRenderer = ({ documentId }: BlockRendererProps) => {
               <BlockComponentMatcher block={block} />
             </Draggable>
           ))}
-          <LastBlockIndicator isDropTarget={dropIndex == documentBlocks.length} />
+          <BlockListEndArea isDropTarget={dropIndex == documentBlocks.length} />
         </div>
       </DragAndDropWrapper>
     </OutsideClickWrapper>

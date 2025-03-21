@@ -1,6 +1,6 @@
 import { Document } from "../types";
 
-export const newDocument = (userId: string): Document => {
+export const createNewDocument = (userId: string): Document => {
   return {
     id: crypto.randomUUID(),
     ownerId: userId,
