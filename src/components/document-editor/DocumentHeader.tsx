@@ -24,7 +24,7 @@ const DocumentHeader = ({ document }: { document: Document }) => {
     ref.current?.blur();
     const block = createNewBlock(document.id);
     const minOrder = blocks.reduce((min, block) => (block.order < min ? block.order : min), 0) - 1;
-    addBlock({ ...block, order: minOrder || 1, content: "Ich bin ein Block" } as TextBlock);
+    addBlock({ ...block, order: minOrder || 1, content: "" } as TextBlock);
     setFocused(block.id);
   };
 

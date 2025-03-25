@@ -1,7 +1,7 @@
 import debounce from "lodash.debounce";
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useBlockEditorState, useCurrentBlocks, useOutsideClick } from "../../hooks";
-import { useBlocksStore, useBlocksUIStore } from "../../store";
+import { useBlocksStore, useBlocksUIStore, useCommandMenuUIStore } from "../../store";
 import { Block, BlockEditorState, BlockType, TextBlock, TodoBlock } from "../../types";
 import { createNewBlock } from "../../utils";
 
@@ -16,6 +16,7 @@ const BlockContentEditor = React.memo(({ block }: { block: ContentEditableBlock 
   const [isEditing, setIsEditing] = useState(false);
   const isFocused = useBlocksUIStore((state) => state.focusedBlockId === id);
   const isEditable = useBlockEditorState() == BlockEditorState.VIEWING;
+  const isCommandMenuOpen = useCommandMenuUIStore((state) => state.isCommandMenuOpen);
 
   const debouncedHandleInput = useMemo(
     () => debounce((newValue: string) => updateBlock({ ...block, content: newValue }), 300),
@@ -37,21 +38,22 @@ const BlockContentEditor = React.memo(({ block }: { block: ContentEditableBlock 
     [debouncedHandleInput]
   );
 
-  useEditorFocus(
-    editorRef,
-    id,
-    () => setIsEditing(true),
-    () => setIsEditing(false)
-  );
+  const allowEditing = useCallback(() => setIsEditing(true), []);
+  const forbidEditing = useCallback(() => setIsEditing(false), []);
+
+  useEditorFocus(editorRef, id, allowEditing, forbidEditing);
   useEnterKeyHandler(editorRef, block);
   useBackspaceKeyHandler(editorRef, block);
   useArrowKeyHandler(editorRef, block);
-  useOutsideClick(editorRef, () => setFocused(null), isFocused);
+  useEscapeKeyHandler(editorRef, block);
+  useOutsideClick(editorRef, () => setFocused(null), isFocused && !isCommandMenuOpen);
 
   return (
     <div
       ref={editorRef}
-      className={`${isFocused && "bg-blue-400/10"} ${!isEditable && "select-none"} w-full h-full min-h-8 py-1 outline-none cursor-text select-text`}
+      className={`${isFocused && "bg-blue-400/10"} ${
+        !isEditable && "select-none"
+      } w-full h-full min-h-8 py-1 outline-none cursor-text select-text`}
       onMouseDown={handleMouseEvents.handleMouseDown}
       onMouseUp={handleMouseEvents.handleMouseUp}
       onFocus={handleFocus}
@@ -97,9 +99,10 @@ const useEditorFocus = (
   forbidEditing: () => void
 ) => {
   const isFocused = useBlocksUIStore((state) => state.focusedBlockId === blockId);
+  const { isCommandMenuOpen } = useCommandMenuUIStore();
 
   useEffect(() => {
-    if (isFocused && editorRef.current) {
+    if (isFocused && editorRef.current && !isCommandMenuOpen) {
       allowEditing();
 
       const range = document.createRange();
@@ -110,18 +113,18 @@ const useEditorFocus = (
       selection?.removeAllRanges();
       selection?.addRange(range);
 
-      editorRef.current.focus();
+      setTimeout(() => editorRef.current?.focus(), 1);
     } else if (!isFocused && editorRef.current) {
       editorRef.current.blur();
       forbidEditing();
     }
-  }, [isFocused, editorRef, allowEditing, forbidEditing]);
+  }, [isFocused, editorRef, allowEditing, forbidEditing, isCommandMenuOpen]);
 };
 
 const useEnterKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
   const { id } = block;
-  const { setFocused, focusedBlockId } = useBlocksUIStore();
-  const isFocused = focusedBlockId === id;
+  const { setFocused } = useBlocksUIStore();
+  const isShortcutActive = useIsShortCurActive(id);
   const currentBlocks = useCurrentBlocks();
   const { addBlock } = useBlocksStore();
 
@@ -149,7 +152,7 @@ const useEnterKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: 
   );
 
   useEffect(() => {
-    if (isFocused && editorRef.current) {
+    if (isShortcutActive && editorRef.current) {
       editorRef.current.addEventListener("keydown", handleEnter);
     }
 
@@ -158,13 +161,13 @@ const useEnterKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: 
         editorRef.current.removeEventListener("keydown", handleEnter);
       }
     };
-  }, [isFocused, editorRef, handleEnter]);
+  }, [isShortcutActive, editorRef, handleEnter]);
 };
 
 const useBackspaceKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
   const { id } = block;
-  const { setFocused, focusedBlockId } = useBlocksUIStore();
-  const isFocused = focusedBlockId === id;
+  const { setFocused } = useBlocksUIStore();
+  const isShortcutActive = useIsShortCurActive(id);
   const currentBlocks = useCurrentBlocks();
   const { deleteBlock } = useBlocksStore();
 
@@ -185,7 +188,7 @@ const useBackspaceKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, blo
   );
 
   useEffect(() => {
-    if (isFocused && editorRef.current) {
+    if (isShortcutActive && editorRef.current) {
       editorRef.current.addEventListener("keydown", handleBackspace);
     }
 
@@ -194,13 +197,13 @@ const useBackspaceKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, blo
         editorRef.current.removeEventListener("keydown", handleBackspace);
       }
     };
-  }, [isFocused, editorRef, handleBackspace]);
+  }, [isShortcutActive, editorRef, handleBackspace]);
 };
 
 const useArrowKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
   const { id } = block;
-  const { setFocused, focusedBlockId } = useBlocksUIStore();
-  const isFocused = focusedBlockId === id;
+  const { setFocused } = useBlocksUIStore();
+  const isShortcutActive = useIsShortCurActive(id);
   const currentBlocks = useCurrentBlocks();
 
   const handleArrowKey = useCallback(
@@ -222,7 +225,7 @@ const useArrowKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: 
   );
 
   useEffect(() => {
-    if (isFocused && editorRef.current) {
+    if (isShortcutActive && editorRef.current) {
       editorRef.current.addEventListener("keydown", handleArrowKey);
     }
 
@@ -231,7 +234,35 @@ const useArrowKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: 
         editorRef.current.removeEventListener("keydown", handleArrowKey);
       }
     };
-  }, [isFocused, editorRef, handleArrowKey]);
+  }, [isShortcutActive, editorRef, handleArrowKey]);
+};
+
+const useEscapeKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
+  const { id } = block;
+  const { setFocused } = useBlocksUIStore();
+  const isShortcutActive = useIsShortCurActive(id);
+
+  const handleEscape = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setFocused(null);
+      }
+    },
+    [setFocused]
+  );
+
+  useEffect(() => {
+    if (isShortcutActive && editorRef.current) {
+      editorRef.current.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      if (editorRef.current) {
+        editorRef.current.removeEventListener("keydown", handleEscape);
+      }
+    };
+  }, [isShortcutActive, editorRef, handleEscape]);
 };
 
 const findBlockInsertionOrder = (blocks: Block[], block: Block) => {
@@ -260,4 +291,12 @@ const findBlockBelow = (blocks: Block[], block: Block) => {
 
 const checkIsBlockContentEditable = (block: Block) => {
   return block.type === BlockType.TEXT || block.type === BlockType.TODO;
+};
+
+const useIsShortCurActive = (blockId: string) => {
+  const { focusedBlockId } = useBlocksUIStore();
+  const isFocused = focusedBlockId === blockId;
+  const { isCommandMenuOpen } = useCommandMenuUIStore();
+
+  return isFocused && !isCommandMenuOpen;
 };

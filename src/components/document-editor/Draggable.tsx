@@ -60,6 +60,10 @@ const useHideDragIcon = (setBlockHovered: (value: boolean) => void) => {
   const focusedBlockId = useBlocksUIStore((state) => state.focusedBlockId);
 
   useEffect(() => {
+    setBlockHovered(false);
+  }, [focusedBlockId, setBlockHovered]);
+
+  useEffect(() => {
     if (selectedBlocks.length <= 1) setBlockHovered(false);
-  }, [focusedBlockId, selectedBlocks, setBlockHovered]);
+  }, [selectedBlocks, setBlockHovered]);
 };

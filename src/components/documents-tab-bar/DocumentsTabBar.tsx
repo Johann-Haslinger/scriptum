@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
 import { useBlockEditorState, useOpenDocuments, useRootDocument } from "../../hooks";
-import { useCommandMenuUIStore, useDocumentsUIStore } from "../../store";
+import { useBlocksUIStore, useCommandMenuUIStore, useDocumentsUIStore } from "../../store";
 import { BlockEditorState } from "../../types";
 import DocumentTab from "./DocumentTab";
 import RootDocumentTab from "./RootDocumentTab";
@@ -55,14 +55,11 @@ const useDocumentsNavigation = () => {
   const { rootDocumentId, isRootDocumentCurrent } = useRootDocument();
   const blockEditorState = useBlockEditorState();
   const isCommandMenuOpen = useCommandMenuUIStore((state) => state.isCommandMenuOpen);
+  const { focusedBlockId } = useBlocksUIStore();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (blockEditorState !== BlockEditorState.VIEWING || isCommandMenuOpen) return;
-
-      if (e.key === "Escape" && currentDocumentId !== rootDocumentId) {
-        setCurrentDocument(rootDocumentId);
-      }
 
       if (e.metaKey && e.key === "1") {
         setCurrentDocument(rootDocumentId);
@@ -119,5 +116,6 @@ const useDocumentsNavigation = () => {
     openDocuments,
     setDocumentOpen,
     isCommandMenuOpen,
+    focusedBlockId,
   ]);
 };

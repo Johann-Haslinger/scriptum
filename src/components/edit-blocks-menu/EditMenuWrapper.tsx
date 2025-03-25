@@ -49,7 +49,7 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
     topDistance !== -1 && (
       <motion.div
         data-element-id="edit-blocks-menu"
-        className={`fixed z-[200] space-y-1.5 h-fit p-1.5 rounded-xl`}
+        className={`fixed z-20 space-y-1.5 h-fit p-1.5 rounded-xl`}
         variants={editMenuVariants}
         transition={transition}
         initial="hidden"

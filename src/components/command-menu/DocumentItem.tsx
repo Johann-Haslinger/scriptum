@@ -43,7 +43,6 @@ const DocumentItem = ({ document }: { document: Document }) => {
       {isFocused && (
         <div className="flex text-sm opacity-50 items-center space-x-2 bg-black/20 rounded-lg  py-1 px-4 outline outline-white/10">
           <CornerDownLeft size={14} />
-          <p>Enter</p>
         </div>
       )}
     </div>

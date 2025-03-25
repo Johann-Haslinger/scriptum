@@ -7,15 +7,15 @@ interface BlockBase {
   order: number;
 }
 
-interface EditableTextBlock extends BlockBase {
+interface ContentEditableBlockBase extends BlockBase {
   content: string;
 }
 
-export interface TextBlock extends EditableTextBlock {
+export interface TextBlock extends ContentEditableBlockBase {
   type: BlockType.TEXT;
 }
 
-export interface TodoBlock extends EditableTextBlock {
+export interface TodoBlock extends ContentEditableBlockBase {
   type: BlockType.TODO;
   checked: boolean;
 }

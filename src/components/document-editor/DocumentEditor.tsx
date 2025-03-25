@@ -48,7 +48,7 @@ const useAddEmptyBlock = (document: Document) => {
   useEffect(() => {
     if (documentBlocks.length === 0 && !hasAddedBlock.current && name.trim() !== "") {
       const block = createNewBlock(documentId);
-      addBlock({ ...block, order: 1, content: "Ich bin ein Block" } as TextBlock);
+      addBlock({ ...block, order: 1, content: "" } as TextBlock);
       setFocused(block.id);
       hasAddedBlock.current = true;
     }

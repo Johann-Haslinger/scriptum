@@ -1,5 +1,6 @@
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { PropsWithChildren, useEffect, useRef, useState, useCallback } from "react";
 import { useBlocksUIStore } from "../../store";
+import debounce from "lodash.debounce";
 
 interface RubberBandSelectorProps extends PropsWithChildren {
   blocksAreaRef: React.RefObject<HTMLDivElement | null>;
@@ -12,10 +13,8 @@ export const RubberBandSelector = ({ children, blocksAreaRef }: RubberBandSelect
   const [currentPos, setCurrentPos] = useState<{ x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const threshold = 5;
-  const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setIsRubberBandSelecting(isSelecting);
     setIsRubberBandSelecting(isSelecting);
   }, [isSelecting, setIsRubberBandSelecting]);
 
@@ -47,60 +46,52 @@ export const RubberBandSelector = ({ children, blocksAreaRef }: RubberBandSelect
     setCurrentPos({ x: e.clientX, y: e.clientY });
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!startPos) return;
+  const handleMouseMove = useCallback(
+    debounce((e: React.MouseEvent) => {
+      if (!startPos) return;
 
-    if (animationFrameRef.current === null) {
-      animationFrameRef.current = requestAnimationFrame(() => {
-        const newPos = { x: e.clientX, y: e.clientY };
-        setCurrentPos(newPos);
+      const newPos = { x: e.clientX, y: e.clientY };
+      setCurrentPos(newPos);
 
-        if (!isSelecting) {
-          const distance = Math.sqrt(Math.pow(newPos.x - startPos.x, 2) + Math.pow(newPos.y - startPos.y, 2));
-          if (distance >= threshold) {
-            setIsSelecting(true);
-          } else {
-            animationFrameRef.current = null;
-            return;
-          }
+      if (!isSelecting) {
+        const distance = Math.sqrt(Math.pow(newPos.x - startPos.x, 2) + Math.pow(newPos.y - startPos.y, 2));
+        if (distance >= threshold) {
+          setIsSelecting(true);
+        } else {
+          return;
         }
+      }
 
-        const rect = {
-          x: Math.min(startPos.x, newPos.x),
-          y: Math.min(startPos.y, newPos.y),
-          width: Math.abs(newPos.x - startPos.x),
-          height: Math.abs(newPos.y - startPos.y),
-        };
+      const rect = {
+        x: Math.min(startPos.x, newPos.x),
+        y: Math.min(startPos.y, newPos.y),
+        width: Math.abs(newPos.x - startPos.x),
+        height: Math.abs(newPos.y - startPos.y),
+      };
 
-        document.querySelectorAll(".block").forEach((block) => {
-          const blockRect = block.getBoundingClientRect();
-          const blockId = block.getAttribute("data-block-id");
-          if (
-            blockRect.left < rect.x + rect.width &&
-            blockRect.right > rect.x &&
-            blockRect.top < rect.y + rect.height &&
-            blockRect.bottom > rect.y &&
-            blockId
-          ) {
-            setSelected(blockId, true);
-          } else if (blockId && !e.shiftKey && selectedBlockIds[blockId]) {
-            setSelected(blockId, false);
-          }
-        });
-
-        animationFrameRef.current = null;
+      document.querySelectorAll(".block").forEach((block) => {
+        const blockRect = block.getBoundingClientRect();
+        const blockId = block.getAttribute("data-block-id");
+        if (
+          blockRect.left < rect.x + rect.width &&
+          blockRect.right > rect.x &&
+          blockRect.top < rect.y + rect.height &&
+          blockRect.bottom > rect.y &&
+          blockId
+        ) {
+          setSelected(blockId, true);
+        } else if (blockId && !e.shiftKey && selectedBlockIds[blockId]) {
+          setSelected(blockId, false);
+        }
       });
-    }
-  };
+    }, 2), 
+    [startPos, isSelecting, setSelected, selectedBlockIds]
+  );
 
   const handleMouseUp = () => {
     setIsSelecting(false);
     setStartPos(null);
     setCurrentPos(null);
-    if (animationFrameRef.current !== null) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
-    }
   };
 
   return (

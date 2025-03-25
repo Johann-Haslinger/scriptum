@@ -1,19 +1,22 @@
 "use client";
 import { RefObject, useEffect } from "react";
 
-export const useOutsideClick = (
-  ref: RefObject<HTMLElement | null>,
-  callback: (e: Event) => void,
-  isActive: boolean = true
-) => {
+export const useOutsideClick = (ref: RefObject<HTMLElement | null>, callback: () => void, isActive: boolean) => {
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
-      if (ref?.current && !ref?.current.contains(event.target as Node) && isActive) {
-        callback(event);
+      if (
+        event.target &&
+        ref?.current &&
+        event.target instanceof Node &&
+        !ref?.current.contains(event.target) &&
+        isActive
+      ) {
+        callback();
       }
     };
-
-    document.addEventListener("mousedown", handleClick);
+    if (isActive && ref?.current) {
+      document.addEventListener("mousedown", handleClick);
+    }
     return () => {
       document.removeEventListener("mousedown", handleClick);
     };
