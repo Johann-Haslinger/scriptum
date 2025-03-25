@@ -1,4 +1,4 @@
-import { useBlockEditorState, useOutsideClick } from "@/hooks";
+import { useBlockEditorState } from "@/hooks";
 import { useBlocksUIStore } from "@/store";
 import { Block, BlockEditorState } from "@/types";
 import { PropsWithChildren, useRef, useState } from "react";
@@ -16,6 +16,7 @@ const BlockWrapper = ({ children, block }: BlockWrapperProps) => {
   return (
     <Selectable blockId={id}>
       <div
+        data-element-id="block"
         data-block-id={id}
         className={`block min-h-8 px-2 py-0.5 rounded-lg transition-colors
           ${isSelected ? "bg-blue-400/20 " : ""} ${
@@ -34,16 +35,13 @@ interface SelectableProps extends PropsWithChildren {
   blockId: string;
 }
 const Selectable = ({ children, blockId }: SelectableProps) => {
-  const { selectedBlockIds: selectedBlocks, setSelected, draggingBlocks } = useBlocksUIStore();
-  const isPressed = selectedBlocks[blockId];
+  const { selectedBlockIds, setSelected, draggingBlocks } = useBlocksUIStore();
+  const isPressed = selectedBlockIds[blockId];
   const blockeditorState = useBlockEditorState();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const textBlockRef = useRef<HTMLElement>(null);
   const [startX, setStartX] = useState<number | null>(null);
   const [translateX, setTranslateX] = useState<number>(0);
   const [isSwiping, setIsSwiping] = useState<boolean>(false);
-
-  useOutsideClick(textBlockRef, () => setTranslateX(0));
 
   const toggleIsBlockPressed = () => {
     if (draggingBlocks[blockId]) return;

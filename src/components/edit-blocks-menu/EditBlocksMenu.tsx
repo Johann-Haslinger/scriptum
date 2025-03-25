@@ -1,8 +1,8 @@
 import { AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { IoAddCircleOutline, IoArrowForward, IoSparkles, IoText, IoTrash } from "react-icons/io5";
 import { useBlockEditorState } from "../../hooks";
-import { useBlocksStore, useBlocksUIStore } from "../../store";
+import { useBlocksStore, useBlocksUIStore, useCommandMenuUIStore } from "../../store";
 import { useEditMenuUIStore } from "../../store/editMenuUIStore";
 import { Block, BlockEditorState, BlockType, EditOption, EditOptionName } from "../../types";
 import EditMenuWrapper from "./EditMenuWrapper";
@@ -138,10 +138,15 @@ const useEditOptionNavigationByKeyPress = (editOptions: EditOption[]) => {
   const { selectedBlockIds, setSelected } = useBlocksUIStore();
   const { blocks } = useBlocksStore();
   const blockEditorState = useBlockEditorState();
-
+  const isCommandMenuOpen = useCommandMenuUIStore((state) => state.isCommandMenuOpen);
+  const isActive = useMemo(() => blockEditorState === BlockEditorState.EDITING_BLOCKS && !isCommandMenuOpen, [
+    blockEditorState,
+    isCommandMenuOpen,
+  ]);
+  
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (blockEditorState !== BlockEditorState.EDITING_BLOCKS) return;
+      if (!isActive) return;
 
       const currentIndex = editOptions.findIndex((option) => option.name == focusedEditOption);
       let newIndex = currentIndex;
@@ -176,5 +181,6 @@ const useEditOptionNavigationByKeyPress = (editOptions: EditOption[]) => {
     blocks,
     setCurrentEditOption,
     setSelected,
+    isActive,
   ]);
 };
