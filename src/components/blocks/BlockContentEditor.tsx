@@ -67,6 +67,36 @@ const BlockContentEditor = React.memo(({ block }: { block: ContentEditableBlock 
   );
 });
 
+// const useChangeBlockTypeHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
+//   const { id, type } = block;
+//   const { setFocused } = useBlocksUIStore();
+//   const isShortcutActive = useIsShortCurActive(id);
+//   const currentBlocks = useCurrentBlocks();
+//   const { updateBlock } = useBlocksStore();
+
+//   const handleKeyDown = useCallback(
+//     (event: KeyboardEvent) => {
+//       if (event.key === "-" && editorRef.current?.innerText === "") {
+//         event.preventDefault();
+//         updateBlock({ ...block, type: BlockType.LIST_ITEM });
+//       }
+//     },
+//     [block, type, updateBlock]
+//   );
+
+//   useEffect(() => {
+//     if (isShortcutActive && editorRef.current) {
+//       editorRef.current.addEventListener("keydown", handleKeyDown);
+//     }
+
+//     return () => {
+//       if (editorRef.current) {
+//         editorRef.current.removeEventListener("keydown", handleKeyDown);
+//       }
+//     };
+//   }, [isShortcutActive, editorRef, handleKeyDown]);
+// };
+
 const useMouseSelectionHandler = (setIsEditing: React.Dispatch<React.SetStateAction<boolean>>) => {
   const handleMouseDown = useCallback(() => {
     const selection = window.getSelection();

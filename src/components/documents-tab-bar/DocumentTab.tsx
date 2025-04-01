@@ -52,8 +52,8 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
       ${isCloseIconVisible ? "pl-2" : "pl-4"}
       ${
         isCurrent
-          ? "bg-black/10 dark:bg-white/15 text-black/80 dark:text-white/80"
-          : "bg-black/5 dark:bg-white/[0.07] dark:hover:bg-white/10 cursor-pointer text-black/40 dark:text-white/40"
+          ? "bg-black/10 dark:bg-white/15 text-black/80 dark:text-white"
+          : "bg-black/5 dark:bg-white/[0.07] dark:hover:bg-white/10 cursor-pointer text-black/40 dark:text-white/70"
       }`}
       >
         <AnimatePresence>

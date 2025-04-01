@@ -33,8 +33,8 @@ const RootDocumentTab = () => {
         data-tooltip-id="open-root-document"
         className={`${
           isRootDocumentCurrent
-            ? "bg-black/10 dark:bg-white/15 text-black/80 dark:text-white/80"
-            : "bg-black/5 dark:bg-white/[0.07] hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer text-black/40 dark:text-white/40"
+            ? "bg-black/10 dark:bg-white/15 text-black/80 dark:text-white"
+            : "bg-black/5 dark:bg-white/[0.07] hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer text-black/40 dark:text-white/70"
         } overflow-hidden h-9 focus:outline-2 outline-blue-500/40 outline-offset-1 flex rounded-full py-1 items-center px-3`}
       >
         <IoHome />
