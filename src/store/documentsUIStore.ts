@@ -5,6 +5,8 @@ type DocumentsUIStore = {
   setDocumentOpen: (documentId: string, value: boolean) => void;
   currentDocumentId: string | null;
   setCurrentDocument: (documentId: string) => void;
+  isEditingCurrentDocumentName: boolean;
+  setIsEditingCurrentDocumentName: (isEditing: boolean) => void;
 };
 
 export const useDocumentsUIStore = create<DocumentsUIStore>((set) => {
@@ -22,6 +24,13 @@ export const useDocumentsUIStore = create<DocumentsUIStore>((set) => {
       set(() => {
         const currentDocumentId = documentId;
         return { currentDocumentId };
+      });
+    },
+    isEditingCurrentDocumentName: false,
+    setIsEditingCurrentDocumentName: (isEditing) => {
+      set(() => {
+        const isEditingCurrentDocumentName = isEditing;
+        return { isEditingCurrentDocumentName };
       });
     },
   };

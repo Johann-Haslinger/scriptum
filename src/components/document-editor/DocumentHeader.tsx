@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useBlocksStore, useBlocksUIStore, useDocumentsStore } from "../../store";
+import { useBlocksStore, useBlocksUIStore, useDocumentsStore, useDocumentsUIStore } from "../../store";
 import { Document, TextBlock } from "../../types";
 import { createNewBlock } from "../../utils";
 
@@ -11,14 +11,23 @@ const DocumentHeader = ({ document }: { document: Document }) => {
   const isRootDocument = type === "root";
   const { addBlock, blocks } = useBlocksStore();
   const { setFocused } = useBlocksUIStore();
+  const { isEditingCurrentDocumentName, setIsEditingCurrentDocumentName } = useDocumentsUIStore();
+
+  useEffect(() => {
+    if (currentValue.trim() === "") {
+      setIsEditingCurrentDocumentName(true);
+    }
+  }, [setIsEditingCurrentDocumentName, currentValue]);
 
   const updateDocumentName = () => {
-    if (currentValue.trim() && currentValue.trim() !== name) {
+    setIsEditingCurrentDocumentName(false);
+
+    if (currentValue.trim() !== name) {
       updateDocument({ ...document, name: currentValue.trim() });
     }
   };
 
-  useInitialFocus(ref, !currentValue.trim());
+  useHeaderFocus(ref, isEditingCurrentDocumentName);
 
   const handleEnterClick = () => {
     ref.current?.blur();
@@ -69,10 +78,12 @@ const DocumentHeader = ({ document }: { document: Document }) => {
 
 export default DocumentHeader;
 
-const useInitialFocus = (ref: React.RefObject<HTMLTextAreaElement | null>, isActive: boolean) => {
+const useHeaderFocus = (ref: React.RefObject<HTMLTextAreaElement | null>, isActive: boolean) => {
   useEffect(() => {
     if (ref.current && isActive) {
       ref.current.focus();
+      const length = ref.current.value.length;
+      ref.current.setSelectionRange(length, length);
     }
   }, [isActive, ref]);
 };

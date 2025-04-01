@@ -1,7 +1,7 @@
 import debounce from "lodash.debounce";
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useBlockEditorState, useCurrentBlocks, useOutsideClick } from "../../hooks";
-import { useBlocksStore, useBlocksUIStore, useCommandMenuUIStore } from "../../store";
+import { useBlockEditorState, useCurrentBlocks, useOutsideClick, useRootDocument } from "../../hooks";
+import { useBlocksStore, useBlocksUIStore, useCommandMenuUIStore, useDocumentsUIStore } from "../../store";
 import { Block, BlockEditorState, BlockType, TextBlock, TodoBlock } from "../../types";
 import { createNewBlock } from "../../utils";
 
@@ -200,6 +200,8 @@ const useBackspaceKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, blo
   const isShortcutActive = useIsShortCurActive(id);
   const currentBlocks = useCurrentBlocks();
   const { deleteBlock } = useBlocksStore();
+  const { setIsEditingCurrentDocumentName } = useDocumentsUIStore();
+  const { isRootDocumentCurrent } = useRootDocument();
 
   const handleBackspace = useCallback(
     (event: KeyboardEvent) => {
@@ -211,10 +213,14 @@ const useBackspaceKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, blo
         if (blockAbove && checkIsBlockContentEditable(blockAbove)) {
           setFocused(blockAbove.id);
           deleteBlock(block.id);
+        } else if (!blockAbove && !isRootDocumentCurrent) {
+          setIsEditingCurrentDocumentName(true);
+          setFocused(null);
+          deleteBlock(block.id);
         }
       }
     },
-    [block, currentBlocks, deleteBlock, setFocused]
+    [block, currentBlocks, deleteBlock, setFocused, setIsEditingCurrentDocumentName, isRootDocumentCurrent]
   );
 
   useEffect(() => {

@@ -2,6 +2,7 @@ export * from "./useAuthManager";
 export * from "./useBlockEditorState";
 export * from "./useBlockSelectionByKeyPress";
 export * from "./useCurrentBlocks";
+export * from "./useCurrentDocument";
 export * from "./useDisableZoomAndScrollOnTouch";
 export * from "./useIsDarkModeActive";
 export * from "./useOpenDocuments";

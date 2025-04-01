@@ -1,10 +1,23 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useOpenDocuments, useRootDocument } from "../../hooks";
 import { useDocumentsUIStore } from "../../store";
 import { Document } from "../../types";
 import { Tooltip } from "../tooltip";
+
+const useIsTextTruncated = (text: string) => {
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (textRef.current) {
+      setIsTruncated(textRef.current.scrollWidth > textRef.current.clientWidth);
+    }
+  }, [text]);
+
+  return { isTruncated, textRef };
+};
 
 const DocumentTab = ({ document, index }: { document: Document; index: number }) => {
   const { id, name } = document;
@@ -15,6 +28,8 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
   const isCloseIconVisible = isHovered || isCurrent;
   const openDocuments = useOpenDocuments();
   const isPlaceholderVisible = !name.trim();
+  const { isTruncated, textRef } = useIsTextTruncated(name);
+  const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
 
   const setDocumentCurrent = () => setCurrentDocument(id);
   const closeDocument = () => {
@@ -46,9 +61,10 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
         onMouseDown={(e) => e.preventDefault()}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        data-tooltip-id={`document-tab-${id}`}
         onFocus={() => setIsHovered(true)}
         onBlur={() => setIsHovered(false)}
-        className={`flex focus:outline-2 focus:outline-blue-500/40 outline-offset-1 items-center active:opacity-50 transition-all rounded-full pr-4 py-1
+        className={`flex focus:outline-2 max-w-40 focus:outline-blue-500/40 outline-offset-1 items-center active:opacity-50 transition-all rounded-full pr-4 py-1
       ${isCloseIconVisible ? "pl-2" : "pl-4"}
       ${
         isCurrent
@@ -60,6 +76,10 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
           {isCloseIconVisible && (
             <div>
               <motion.button
+                onMouseEnter={() => setIsCloseButtonHovered(true)}
+                onMouseLeave={() => setIsCloseButtonHovered(false)}
+                onFocus={() => setIsCloseButtonHovered(true)}
+                onBlur={() => setIsCloseButtonHovered(false)}
                 data-tooltip-id="close-document"
                 tabIndex={4 + index * 2}
                 onClick={(e) => {
@@ -83,8 +103,16 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
             </div>
           )}
         </AnimatePresence>
-        <p className="font-medium  line-clamp-1">{isPlaceholderVisible ? "Untitled" : name}</p>
+        <p ref={textRef} className="font-medium truncate w-full">
+          {isPlaceholderVisible ? "Untitled" : name}
+        </p>
       </motion.div>
+
+      {isTruncated && !isCloseButtonHovered && (
+        <Tooltip place="bottom" id={`document-tab-${id}`}>
+          {name}
+        </Tooltip>
+      )}
     </div>
   );
 };
