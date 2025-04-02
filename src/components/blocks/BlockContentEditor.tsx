@@ -51,9 +51,7 @@ const BlockContentEditor = React.memo(({ block }: { block: ContentEditableBlock 
   return (
     <div
       ref={editorRef}
-      className={`${isFocused && "bg-blue-400/10"} ${
-        !isEditable && "select-none"
-      } w-full h-full min-h-8 py-1 outline-none cursor-text select-text`}
+      className={`${!isEditable && "select-none"} w-full h-full min-h-8 py-1 outline-none cursor-text select-text`}
       onMouseDown={handleMouseEvents.handleMouseDown}
       onMouseUp={handleMouseEvents.handleMouseUp}
       onFocus={handleFocus}

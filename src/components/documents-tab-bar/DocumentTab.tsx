@@ -5,6 +5,7 @@ import { useOpenDocuments, useRootDocument } from "../../hooks";
 import { useDocumentsUIStore } from "../../store";
 import { Document } from "../../types";
 import { Tooltip } from "../tooltip";
+import { Command, Delete } from "lucide-react";
 
 const useIsTextTruncated = (text: string) => {
   const [isTruncated, setIsTruncated] = useState(false);
@@ -93,11 +94,11 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
                 whileHover={{
                   scale: 1.1,
                 }}
-                className="bg-black/30 focus:outline-2 outline-blue-500/40 outline-offset-1 dark:bg-white/15 hover:bg-black/60 dark:hover:bg-white/40 cursor-pointer size-4 flex justify-center items-center text-sm rounded-full text-white/80 dark:text-black/70"
+                className="bg-black/30 focus:outline-2 outline-blue-500/40 outline-offset-1 dark:bg-white/0 hover:bg-black/60 dark:hover:bg-white/20 cursor-pointer size-4 flex justify-center items-center text-sm rounded-full text-white/80 dark:text-white"
               >
                 <IoClose />
               </motion.button>
-              <Tooltip place="bottom" id="close-document">
+              <Tooltip shortcut={[<Command key={1} size={14} />, <Delete key={1} size={14} />]}  place="bottom" id="close-document">
                 Close document
               </Tooltip>
             </div>
