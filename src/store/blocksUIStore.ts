@@ -2,8 +2,6 @@ import { create } from "zustand";
 
 const STORAGE_SELECTED_BLOCKS = "selectedBlockIds";
 const STORAGE_FOCUSED_BLOCK = "focusedBlockId";
-const STORAGE_DROP_INDEX = "dropIndex";
-const STORAGE_IS_RUBBER_BAND_SELECTING = "isRubberBandSelecting";
 
 type BlocksUIStore = {
   selectedBlockIds: Record<string, boolean>;
@@ -12,6 +10,8 @@ type BlocksUIStore = {
   setDragging: (blockId: string, value: boolean) => void;
   focusedBlockId: string | null;
   setFocused: (blockId: string | null) => void;
+  initialFocusedCursorPosition: number | null;
+  setInitialFocusedCursorPosition: (position: number | null) => void;
   dropIndex: number;
   setDropIndex: (index: number) => void;
   isRubberBandSelecting: boolean;
@@ -19,18 +19,10 @@ type BlocksUIStore = {
 };
 
 export const useBlocksUIStore = create<BlocksUIStore>((set) => {
-  const storedSelectedBlockIds = typeof localStorage !== "undefined"
-    ? JSON.parse(localStorage.getItem(STORAGE_SELECTED_BLOCKS) || "{}")
-    : {};
-  const storedFocusedBlockId = typeof localStorage !== "undefined"
-    ? localStorage.getItem(STORAGE_FOCUSED_BLOCK) || null
-    : null;
-  const storedDropIndex = typeof localStorage !== "undefined"
-    ? parseInt(localStorage.getItem(STORAGE_DROP_INDEX) || "-1", 10)
-    : -1;
-  const storedIsRubberBandSelecting = typeof localStorage !== "undefined"
-    ? localStorage.getItem(STORAGE_IS_RUBBER_BAND_SELECTING) === "true"
-    : false;
+  const storedSelectedBlockIds =
+    typeof localStorage !== "undefined" ? JSON.parse(localStorage.getItem(STORAGE_SELECTED_BLOCKS) || "{}") : {};
+  const storedFocusedBlockId =
+    typeof localStorage !== "undefined" ? localStorage.getItem(STORAGE_FOCUSED_BLOCK) || null : null;
 
   return {
     selectedBlockIds: storedSelectedBlockIds,
@@ -55,17 +47,21 @@ export const useBlocksUIStore = create<BlocksUIStore>((set) => {
         return { focusedBlockId: blockId };
       });
     },
-    dropIndex: storedDropIndex,
+    initialFocusedCursorPosition: null,
+    setInitialFocusedCursorPosition: (position) => {
+      set(() => {
+        return { initialFocusedCursorPosition: position };
+      });
+    },
+    dropIndex: -1,
     setDropIndex: (index) => {
       set(() => {
-        localStorage.setItem(STORAGE_DROP_INDEX, index.toString());
         return { dropIndex: index };
       });
     },
-    isRubberBandSelecting: storedIsRubberBandSelecting,
+    isRubberBandSelecting: false,
     setIsRubberBandSelecting: (value) => {
       set(() => {
-        localStorage.setItem(STORAGE_IS_RUBBER_BAND_SELECTING, value.toString());
         return { isRubberBandSelecting: value };
       });
     },

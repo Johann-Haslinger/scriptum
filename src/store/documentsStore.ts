@@ -43,7 +43,6 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
       });
     },
     updateDocument: async (document) => {
-      console.log("Updating document", document);
       const { error } = await supabaseClient
         .from(SupabaseTable.DOCUMENTS)
         .update(toSnakeCase(document))

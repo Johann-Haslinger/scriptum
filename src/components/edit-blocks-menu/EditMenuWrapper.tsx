@@ -139,8 +139,6 @@ const useIsOutsideClickActive = () => {
   const { selectedBlockIds } = useBlocksUIStore();
   const isCommandMenuOpen = useCommandMenuUIStore((state) => state.isCommandMenuOpen);
   const isActive = useMemo(() => {
-    console.log("selectedBlockIds", Object.keys(selectedBlockIds).length > 0);
-    console.log("isCommandMenuOpen", !isCommandMenuOpen);
     return Object.keys(selectedBlockIds).length > 0 && !isCommandMenuOpen;
   }, [selectedBlockIds, isCommandMenuOpen]);
 
@@ -152,10 +150,8 @@ const useEditMenuOutsideClickHandler = (editMenuRef: React.RefObject<HTMLDivElem
   const { setSelected, selectedBlockIds } = useBlocksUIStore();
 
   useEffect(() => {
-    console.log("isOutsideClickActive", isOutsideClickActive);
     const handleClick = (event: MouseEvent) => {
       if (editMenuRef?.current && event.target instanceof Node && !editMenuRef.current.contains(event.target)) {
-        console.log("selectedBlockIds", selectedBlockIds);
         Object.keys(selectedBlockIds).forEach((blockId: string) => setSelected(blockId, false));
       }
     };

@@ -2,10 +2,10 @@ import debounce from "lodash.debounce";
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useBlockEditorState, useCurrentBlocks, useOutsideClick, useRootDocument } from "../../hooks";
 import { useBlocksStore, useBlocksUIStore, useCommandMenuUIStore, useDocumentsUIStore } from "../../store";
-import { Block, BlockEditorState, BlockType, TextBlock, TodoBlock } from "../../types";
+import { Block, BlockEditorState, BlockType, TextBlock } from "../../types";
 import { createNewBlock } from "../../utils";
 
-type ContentEditableBlock = TextBlock | TodoBlock;
+type ContentEditableBlock = TextBlock;
 
 const BlockContentEditor = React.memo(({ block }: { block: ContentEditableBlock }) => {
   const { id, content } = block;
@@ -41,6 +41,7 @@ const BlockContentEditor = React.memo(({ block }: { block: ContentEditableBlock 
   const allowEditing = useCallback(() => setIsEditing(true), []);
   const forbidEditing = useCallback(() => setIsEditing(false), []);
 
+  useContentUpdateHandler(editorRef, block);
   useEditorFocus(editorRef, id, allowEditing, forbidEditing);
   useEnterKeyHandler(editorRef, block);
   useBackspaceKeyHandler(editorRef, block);
@@ -94,6 +95,15 @@ const BlockContentEditor = React.memo(({ block }: { block: ContentEditableBlock 
 //     };
 //   }, [isShortcutActive, editorRef, handleKeyDown]);
 // };
+
+const useContentUpdateHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
+  const { focusedBlockId } = useBlocksUIStore();
+  const isFocused = focusedBlockId === block.id;
+
+  useEffect(() => {
+    editorRef.current!.innerText = block.content;
+  }, [isFocused, editorRef]);
+};
 
 const useMouseSelectionHandler = (setIsEditing: React.Dispatch<React.SetStateAction<boolean>>) => {
   const handleMouseDown = useCallback(() => {
@@ -151,7 +161,7 @@ const useEditorFocus = (
 
 const useEnterKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
   const { id } = block;
-  const { setFocused } = useBlocksUIStore();
+  const { setFocused, setInitialFocusedCursorPosition } = useBlocksUIStore();
   const isShortcutActive = useIsShortCurActive(id);
   const currentBlocks = useCurrentBlocks();
   const { addBlock } = useBlocksStore();
@@ -161,22 +171,38 @@ const useEnterKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: 
       if (event.key === "Enter") {
         event.preventDefault();
 
+        if (!editorRef) return;
+
+        const offset = editorRef.current ? getCursorPosition(editorRef) : 0;
+
+        const fullText = editorRef.current?.innerText || "";
+
+        const beforeCursor = fullText.substring(0, offset);
+        const afterCursor = fullText.substring(offset);
+
+        block.content = beforeCursor;
+        editorRef.current!.innerText = beforeCursor;
+
         const blockBelow = findBlockBelow(currentBlocks, block);
         const isBlockBelowEmpty =
           blockBelow && checkIsBlockContentEditable(blockBelow) && blockBelow?.content.trim() === "";
 
-        if (isBlockBelowEmpty) {
+        setInitialFocusedCursorPosition(offset);
+
+        if (isBlockBelowEmpty && !afterCursor) {
           setFocused(blockBelow.id);
         } else {
-          const newBlock = createNewBlock(block.documentId);
+          const newBlock = createNewBlock(block.documentId) as ContentEditableBlock;
           const newBlockOrder = findBlockInsertionOrder(currentBlocks, block);
+          newBlock.type = block.type;
           newBlock.order = newBlockOrder;
+          newBlock.content = afterCursor;
           addBlock(newBlock);
           setFocused(newBlock.id);
         }
       }
     },
-    [currentBlocks, block, addBlock, setFocused]
+    [currentBlocks, block, addBlock, setFocused, editorRef]
   );
 
   useEffect(() => {
@@ -194,7 +220,7 @@ const useEnterKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: 
 
 const useBackspaceKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
   const { id } = block;
-  const { setFocused } = useBlocksUIStore();
+  const { setFocused, setInitialFocusedCursorPosition } = useBlocksUIStore();
   const isShortcutActive = useIsShortCurActive(id);
   const currentBlocks = useCurrentBlocks();
   const { deleteBlock } = useBlocksStore();
@@ -203,22 +229,37 @@ const useBackspaceKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, blo
 
   const handleBackspace = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === "Backspace" && editorRef.current?.textContent === "") {
+      if (event.key === "Backspace" && getCursorPosition(editorRef) === 0) {
         event.preventDefault();
 
         const blockAbove = findBlockAbove(currentBlocks, block);
+        const blockContent = editorRef.current?.innerText || "";
 
         if (blockAbove && checkIsBlockContentEditable(blockAbove)) {
+          blockAbove.content += blockContent;
           setFocused(blockAbove.id);
           deleteBlock(block.id);
+          setInitialFocusedCursorPosition(blockAbove.content.length);
         } else if (!blockAbove && !isRootDocumentCurrent) {
-          setIsEditingCurrentDocumentName(true);
-          setFocused(null);
-          deleteBlock(block.id);
+          if (blockContent.trim() === "") {
+            setIsEditingCurrentDocumentName(true);
+            setFocused(null);
+            deleteBlock(block.id);
+            setInitialFocusedCursorPosition(null);
+          }
+        } else {
         }
       }
     },
-    [block, currentBlocks, deleteBlock, setFocused, setIsEditingCurrentDocumentName, isRootDocumentCurrent]
+    [
+      block,
+      currentBlocks,
+      deleteBlock,
+      setFocused,
+      setIsEditingCurrentDocumentName,
+      isRootDocumentCurrent,
+      setInitialFocusedCursorPosition,
+    ]
   );
 
   useEffect(() => {
@@ -324,7 +365,7 @@ const findBlockBelow = (blocks: Block[], block: Block) => {
 };
 
 const checkIsBlockContentEditable = (block: Block) => {
-  return block.type === BlockType.TEXT || block.type === BlockType.TODO;
+  return block.type === BlockType.TEXT;
 };
 
 const useIsShortCurActive = (blockId: string) => {
@@ -333,4 +374,16 @@ const useIsShortCurActive = (blockId: string) => {
   const { isCommandMenuOpen } = useCommandMenuUIStore();
 
   return isFocused && !isCommandMenuOpen;
+};
+
+const getCursorPosition = (editorRef: RefObject<HTMLDivElement | null>) => {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return 0;
+
+  const range = selection.getRangeAt(0);
+  const preCaretRange = range.cloneRange();
+  preCaretRange.selectNodeContents(editorRef.current!);
+  preCaretRange.setEnd(range.startContainer, range.startOffset);
+
+  return preCaretRange.toString().length;
 };

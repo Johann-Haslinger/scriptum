@@ -1,3 +1,5 @@
+"use client";
+
 import {
   useAuthManager,
   useBlockEditorState,
@@ -29,7 +31,7 @@ export default function BlockEditor() {
   return isUserLoggedIn == false ? (
     <AuthUI />
   ) : (
-    <div className={`${blockEditorState == BlockEditorState.EDITING_BLOCKS && "select-none"}`}>
+    <div className={blockEditorState === BlockEditorState.EDITING_BLOCKS ? "select-none" : ""}>
       <DocumentsTabBar />
 
       <SelectionControlWrapper>

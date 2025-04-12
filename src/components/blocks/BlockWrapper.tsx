@@ -1,3 +1,5 @@
+"use client";
+
 import { useBlockEditorState } from "@/hooks";
 import { useBlocksUIStore } from "@/store";
 import { Block, BlockEditorState } from "@/types";

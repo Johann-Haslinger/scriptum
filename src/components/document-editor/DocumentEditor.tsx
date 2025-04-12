@@ -12,7 +12,7 @@ const DocumentEditor = ({ document }: { document: Document }) => {
   const blocksAreaRef = useRef<HTMLDivElement | null>(null);
 
   useUpdateDocumentTimestamp(document);
-  useAddEmptyBlock(document);
+  useFetchDocumentBlocks(id);
 
   return (
     <RubberBandSelector blocksAreaRef={blocksAreaRef}>
@@ -26,6 +26,30 @@ const DocumentEditor = ({ document }: { document: Document }) => {
 
 export default DocumentEditor;
 
+const useFetchDocumentBlocks = (documentId: string) => {
+  const { loadDocumentBlocks } = useBlocksStore();
+  const hasFetchedBlocks = useRef(false);
+  const { addBlock } = useBlocksStore();
+  const { setFocused } = useBlocksUIStore();
+
+  useEffect(() => {
+    const fetchBlocks = async () => {
+      if (hasFetchedBlocks.current) return;
+      const hasDocumentBlocks = await loadDocumentBlocks(documentId);
+
+      if (!hasDocumentBlocks) {
+        const block = createNewBlock(documentId);
+        addBlock({ ...block, order: 1, content: "" } as TextBlock);
+        setFocused(block.id);
+      }
+
+      hasFetchedBlocks.current = true;
+    };
+
+    fetchBlocks();
+  }, [documentId, loadDocumentBlocks]);
+};
+
 export const useUpdateDocumentTimestamp = (document: Document) => {
   const { updateDocument } = useDocumentsStore();
   const hasUpdated = useRef(false);
@@ -36,21 +60,4 @@ export const useUpdateDocumentTimestamp = (document: Document) => {
       hasUpdated.current = true;
     }
   }, [document, updateDocument, hasUpdated]);
-};
-
-const useAddEmptyBlock = (document: Document) => {
-  const { id: documentId, name } = document;
-  const { addBlock, blocks } = useBlocksStore();
-  const { setFocused } = useBlocksUIStore();
-  const documentBlocks = blocks.filter((block) => block.documentId === documentId);
-  const hasAddedBlock = useRef(false);
-
-  useEffect(() => {
-    if (documentBlocks.length === 0 && !hasAddedBlock.current && name.trim() !== "") {
-      const block = createNewBlock(documentId);
-      addBlock({ ...block, order: 1, content: "" } as TextBlock);
-      setFocused(block.id);
-      hasAddedBlock.current = true;
-    }
-  }, [documentBlocks.length, documentId, addBlock, setFocused, name]);
 };
