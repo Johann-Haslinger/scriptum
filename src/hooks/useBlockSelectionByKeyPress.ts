@@ -7,7 +7,7 @@ import { useSelectedBlocks } from "./useSelectedBlocks";
 export const useBlockSelectionByKeyPress = () => {
   const blockEditorState = useBlockEditorState();
   const blocks = useCurrentBlocks();
-  const { setSelected, selectedBlockIds } = useBlocksUIStore();
+  const { setSelected, selectedBlockIds, focusedBlockId } = useBlocksUIStore();
   const [selectionDirection, setSelectionDirection] = useState<"up" | "down" | null>(null);
   const selectedBlocks = useSelectedBlocks();
 
@@ -19,8 +19,11 @@ export const useBlockSelectionByKeyPress = () => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
 
-      if (selectedBlocks.length === 0) return;
+      if (selectedBlocks.length === 0 && focusedBlockId) {
+        if (!e.shiftKey) return;
 
+        setSelected(focusedBlockId, true);
+      }
       const sortedBlocksAsc = [...blocks].sort((a, b) => a.order - b.order);
       const sortedBlocksDesc = [...sortedBlocksAsc].reverse();
 
@@ -75,5 +78,13 @@ export const useBlockSelectionByKeyPress = () => {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [blockEditorState, blocks, selectedBlocks, setSelected, selectionDirection, selectedBlockIds]);
+  }, [
+    blockEditorState,
+    blocks,
+    selectedBlocks.length,
+    setSelected,
+    selectionDirection,
+    selectedBlockIds,
+    focusedBlockId,
+  ]);
 };

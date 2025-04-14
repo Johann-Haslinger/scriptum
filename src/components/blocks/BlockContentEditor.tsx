@@ -52,7 +52,9 @@ const BlockContentEditor = React.memo(({ block }: { block: ContentEditableBlock 
   return (
     <div
       ref={editorRef}
-      className={`${!isEditable && "select-none"} w-full h-full min-h-8 py-1 outline-none cursor-text select-text`}
+      className={`${!isEditable && "select-none"} ${
+        isFocused && "bg-amber-200/5"
+      } w-full h-full min-h-8 py-1 outline-none cursor-text select-text`}
       onMouseDown={handleMouseEvents.handleMouseDown}
       onMouseUp={handleMouseEvents.handleMouseUp}
       onFocus={handleFocus}
@@ -138,6 +140,7 @@ const useEditorFocus = (
 ) => {
   const isFocused = useBlocksUIStore((state) => state.focusedBlockId === blockId);
   const { isCommandMenuOpen } = useCommandMenuUIStore();
+  const blockEditorState = useBlockEditorState();
 
   useEffect(() => {
     if (isFocused && editorRef.current && !isCommandMenuOpen) {
@@ -156,7 +159,7 @@ const useEditorFocus = (
       editorRef.current.blur();
       forbidEditing();
     }
-  }, [isFocused, editorRef, allowEditing, forbidEditing, isCommandMenuOpen]);
+  }, [isFocused, editorRef, allowEditing, forbidEditing, isCommandMenuOpen, blockEditorState]);
 };
 
 const useEnterKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
@@ -289,10 +292,12 @@ const useArrowKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: 
         const blockAbove = findBlockAbove(currentBlocks, block);
         const blockBelow = findBlockBelow(currentBlocks, block);
 
-        if (event.key === "ArrowUp" && blockAbove) {
-          setFocused(blockAbove.id);
-        } else if (event.key === "ArrowDown" && blockBelow) {
-          setFocused(blockBelow.id);
+        if (!event.shiftKey) {
+          if (event.key === "ArrowUp" && blockAbove) {
+            setFocused(blockAbove.id);
+          } else if (event.key === "ArrowDown" && blockBelow) {
+            setFocused(blockBelow.id);
+          }
         }
       }
     },

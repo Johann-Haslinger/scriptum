@@ -20,4 +20,10 @@ export interface ImageBlock extends BlockBase {
   url: string;
 }
 
-export type Block = TextBlock | ImageBlock 
+export interface DocumentBlock extends BlockBase {
+  type: BlockType.DOCUMENT;
+  name: string;
+  documentId: string;
+}
+
+export type Block = TextBlock | ImageBlock | DocumentBlock;

@@ -1,14 +1,12 @@
-import { useBlocksStore, useBlocksUIStore } from "../store";
 import { useMemo } from "react";
+import { useBlocksUIStore } from "../store";
+import { useCurrentBlocks } from "./useCurrentBlocks";
 
 export const useSelectedBlocks = () => {
   const { selectedBlockIds } = useBlocksUIStore();
-  const { blocks } = useBlocksStore();
+  const blocks = useCurrentBlocks();
 
   return useMemo(() => {
-    const selectedSet = new Set(Object.keys(selectedBlockIds));
-    return blocks
-      .filter((block) => selectedSet.has(block.id))
-      .sort((a, b) => a.order - b.order);
+    return blocks.filter((block) => selectedBlockIds[block.id]).sort((a, b) => a.order - b.order);
   }, [selectedBlockIds, blocks]);
 };

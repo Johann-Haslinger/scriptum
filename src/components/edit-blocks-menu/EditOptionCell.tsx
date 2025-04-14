@@ -42,7 +42,7 @@ const EditOptionCell = ({ option, idx }: { option: EditOption; idx: number }) =>
   return (
     <AnimatePresence>
       {(currentEditOption == name || currentEditOption == null) && (
-        <motion.div
+        <motion.button
           onClick={handleClick}
           initial={{
             fontSize: "1.1rem",
@@ -57,7 +57,7 @@ const EditOptionCell = ({ option, idx }: { option: EditOption; idx: number }) =>
           }}
           transition={transition}
           animate={{
-            opacity: 1,
+            opacity: isFocused ? 1 : 0.7,
             width: isCurrent ? "30.5rem" : "2.5rem",
             height: `${height}rem`,
             top,
@@ -65,7 +65,14 @@ const EditOptionCell = ({ option, idx }: { option: EditOption; idx: number }) =>
             outlineOffset: isFocused ? "0px" : "6px",
             outlineWidth: isFocused ? "1.5px" : "4px",
           }}
-          className={`size-10 backdrop-blur-lg outline absolute overflow-hidden p-1 rounded-lg flex justify-center items-center ${option.color}`}
+          whileHover={{
+            opacity: 1,
+          }}
+          whileTap={{
+            scale: 0.9,
+            opacity: 0.7,
+          }}
+          className={`size-10 cursor-pointer backdrop-blur-lg outline absolute overflow-hidden p-1 rounded-lg flex justify-center items-center ${option.color}`}
         >
           <motion.div
             className="border-[1.5px] rounded-md "
@@ -83,7 +90,7 @@ const EditOptionCell = ({ option, idx }: { option: EditOption; idx: number }) =>
           >
             {option.icon}
           </motion.div>
-        </motion.div>
+        </motion.button>
       )}
     </AnimatePresence>
   );

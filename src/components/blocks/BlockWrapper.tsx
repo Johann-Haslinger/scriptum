@@ -114,6 +114,7 @@ const Selectable = ({ children, blockId }: SelectableProps) => {
 
   return (
     <div
+      className="py-[1px]"
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onTouchStart={handleTouchStart}

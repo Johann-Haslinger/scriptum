@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
-import { PropsWithChildren, useEffect, useMemo, useRef, useState } from "react";
-import { useIsDarkModeActive } from "../../hooks";
-import { useBlocksStore, useBlocksUIStore, useCommandMenuUIStore } from "../../store";
+import { PropsWithChildren, RefObject, useEffect, useRef, useState } from "react";
+import { useBlocksStore, useBlocksUIStore } from "../../store";
 import { useEditMenuUIStore } from "../../store/editMenuUIStore";
 
 const EditMenuWrapper = ({ children }: PropsWithChildren) => {
@@ -10,12 +9,9 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
   const topDistance = useTopDistance(menuHeight);
   const leftDistance = useLeftDistance(menuWidth);
   const isAnEditOptionSelected = useIsAnOptionSelected();
-  const isDarkModeActive = useIsDarkModeActive();
   const editMenuRef = useRef<HTMLDivElement | null>(null);
 
-  useEditMenuOutsideClickHandler(editMenuRef);
-
-  const backgroundColorWhenVisible = isDarkModeActive ? "#1f1f1f38" : "#eaeaea4b";
+  useEditMenuOutsideClickHandler(editMenuRef, true);
 
   const editMenuVariants = {
     hidden: {
@@ -26,7 +22,6 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
       width: menuWidth,
       height: menuHeight,
       outlineColor: "rgba(0, 0, 0, 0)",
-      backgroundColor: "rgba(0, 0, 0, 0)",
     },
     visible: {
       opacity: 1,
@@ -36,7 +31,6 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
       width: menuWidth,
       height: menuHeight,
       outlineColor: isAnEditOptionSelected ? "rgba(0, 0, 0, 0)" : "rgba(255, 255, 255, 0.13)",
-      backgroundColor: isAnEditOptionSelected ? "rgba(0, 0, 0, 0)" : backgroundColorWhenVisible,
     },
   };
 
@@ -47,7 +41,7 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
       <motion.div
         ref={editMenuRef}
         data-element-id="edit-blocks-menu"
-        className={`fixed space-y-1.5 h-fit p-1.5 rounded-xl`}
+        className={`fixed space-y-1.5   h-fit p-1.5 rounded-xl`}
         variants={editMenuVariants}
         transition={transition}
         initial="hidden"
@@ -135,31 +129,27 @@ const useIsAnOptionSelected = () => {
   return currentEditOption !== null;
 };
 
-const useIsOutsideClickActive = () => {
-  const { selectedBlockIds } = useBlocksUIStore();
-  const isCommandMenuOpen = useCommandMenuUIStore((state) => state.isCommandMenuOpen);
-  const isActive = useMemo(() => {
-    return Object.keys(selectedBlockIds).length > 0 && !isCommandMenuOpen;
-  }, [selectedBlockIds, isCommandMenuOpen]);
-
-  return isActive;
-};
-
-const useEditMenuOutsideClickHandler = (editMenuRef: React.RefObject<HTMLDivElement | null>) => {
-  const isOutsideClickActive = useIsOutsideClickActive();
-  const { setSelected, selectedBlockIds } = useBlocksUIStore();
+const useEditMenuOutsideClickHandler = (ref: RefObject<HTMLElement | null>, isActive: boolean) => {
+  const { selectedBlockIds, setSelected } = useBlocksUIStore();
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
-      if (editMenuRef?.current && event.target instanceof Node && !editMenuRef.current.contains(event.target)) {
+      const blocksListElement = document.querySelector('[data-element-id="blocks-list"]');
+      if (
+        event.target &&
+        ref?.current &&
+        event.target instanceof Node &&
+        !ref?.current.contains(event.target) &&
+        (!blocksListElement || !blocksListElement.contains(event.target))
+      ) {
         Object.keys(selectedBlockIds).forEach((blockId: string) => setSelected(blockId, false));
       }
     };
-    if (isOutsideClickActive && editMenuRef?.current) {
+    if (isActive && ref?.current) {
       document.addEventListener("mousedown", handleClick);
     }
     return () => {
       document.removeEventListener("mousedown", handleClick);
     };
-  }, [editMenuRef, isOutsideClickActive, selectedBlockIds, setSelected]);
+  }, [ref, isActive]);
 };

@@ -19,7 +19,7 @@ const BlocksRenderer = ({ documentId }: BlockRendererProps) => {
   return (
     <OutsideClickWrapper>
       <DragAndDropWrapper>
-        <div className="space-y-0.5">
+        <div data-element-id="blocks-list">
           {documentBlocks.map((block, index) => (
             <Draggable key={block.id} block={block} isDropTarget={dropIndex == index}>
               <BlockComponentMatcher block={block} />

@@ -12,35 +12,35 @@ const allEditOptions: EditOption[] = [
   {
     name: EditOptionName.AI,
     icon: <IoSparkles />,
-    color: "text-blue-400 dark:text-blue-400/60 bg-blue-400/15 dark:bg-blue-400/10",
+    color: "text-blue-400 dark:text-blue-400/60 bg-blue-400/15 dark:bg-blue-400/15",
     outlineColor: "rgba(0, 123, 255, 0.5)",
     order: 0,
   },
   {
     name: EditOptionName.STYLE,
     icon: <IoText />,
-    color: "text-green-400 dark:text-green-400/60 bg-green-400/15 dark:bg-green-400/10",
+    color: "text-green-400 dark:text-green-400/60 bg-green-400/15 dark:bg-green-400/15",
     outlineColor: "rgba(5, 223, 114, 0.4)",
     order: 1,
   },
   {
     name: EditOptionName.ADD_CONTENT,
     icon: <IoAddCircleOutline />,
-    color: "text-fuchsia-400 dark:text-fuchsia-400/60 bg-fuchsia-400/15 dark:bg-fuchsia-400/10",
+    color: "text-fuchsia-400 dark:text-fuchsia-400/60 bg-fuchsia-400/15 dark:bg-fuchsia-400/15",
     outlineColor: "rgba(221, 114, 250, 0.4)",
     order: 2,
   },
   {
     name: EditOptionName.GROUP_BLOCKS,
     icon: <IoArrowForward />,
-    color: "text-yellow-400 dark:text-yellow-400/60 bg-yellow-400/15 dark:bg-yellow-400/10",
+    color: "text-yellow-400 dark:text-yellow-400/60 bg-yellow-400/15 dark:bg-yellow-400/15",
     outlineColor: "rgba(255, 204, 0, 0.4)",
     order: 3,
   },
   {
     name: EditOptionName.DELETE,
     icon: <IoTrash />,
-    color: "text-red-400 dark:text-red-400/60 bg-red-400/15 dark:bg-red-400/10",
+    color: "text-red-400 dark:text-red-400/60 bg-red-400/15 dark:bg-red-400/15",
     outlineColor: "rgba(255, 59, 48, 0.4)",
     order: 4,
   },
@@ -139,11 +139,11 @@ const useEditOptionNavigationByKeyPress = (editOptions: EditOption[]) => {
   const { blocks } = useBlocksStore();
   const blockEditorState = useBlockEditorState();
   const isCommandMenuOpen = useCommandMenuUIStore((state) => state.isCommandMenuOpen);
-  const isActive = useMemo(() => blockEditorState === BlockEditorState.EDITING_BLOCKS && !isCommandMenuOpen, [
-    blockEditorState,
-    isCommandMenuOpen,
-  ]);
-  
+  const isActive = useMemo(
+    () => blockEditorState === BlockEditorState.EDITING_BLOCKS && !isCommandMenuOpen,
+    [blockEditorState, isCommandMenuOpen]
+  );
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!isActive) return;
