@@ -1,4 +1,5 @@
 import { useDocumentsStore, useDocumentsUIStore } from "../store";
+import { DocumentId } from "../types";
 
 export const useRootDocument = () => {
   const documents = useDocumentsStore((state) => state.documents);
@@ -8,7 +9,7 @@ export const useRootDocument = () => {
   const isRootDocumentCurrent = rootDocument?.id === currentDocumentId;
 
   return {
-    rootDocumentId: rootDocument?.id || "",
+    rootDocumentId: (rootDocument?.id || "") as DocumentId,
     isRootDocumentCurrent,
   };
 };

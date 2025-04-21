@@ -3,13 +3,19 @@ import supabaseClient from "../lib/supabase";
 import { Document, SupabaseTable } from "../types";
 import { toCamelCase, toSnakeCase } from "../utils";
 
+interface DocActionResponse {
+  data: Document | null;
+  error: Error | null;
+}
+
 type DocumentsStore = {
   documents: Document[];
-  addDocument: (document: Document) => void;
+  addDocument: (document: Document) => Promise<DocActionResponse>;
   removeDocument: (documentId: string) => void;
   updateDocument: (document: Document) => void;
-  loadRootDocument: (userId: string) => Promise<void>;
+  loadRootDocument: (userId: string) => Promise<DocActionResponse>;
   loadRecentDocuments: () => Promise<void>;
+  loadDocument: (documentId: string) => Promise<DocActionResponse>;
 };
 
 export const useDocumentsStore = create<DocumentsStore>((set) => {
@@ -20,7 +26,10 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
 
       if (error) {
         console.error("Error inserting document", error);
-        return;
+        return {
+          data: null,
+          error: error as Error,
+        };
       }
 
       set((state) => {
@@ -28,6 +37,11 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
 
         return { documents };
       });
+
+      return {
+        data: document,
+        error: null,
+      } as DocActionResponse;
     },
     removeDocument: async (documentId) => {
       const { error } = await supabaseClient.from(SupabaseTable.DOCUMENTS).delete().eq("id", documentId);
@@ -81,14 +95,25 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
 
         if (insertError) {
           console.error("Error inserting root document", insertError);
-          return;
+          return {
+            data: null,
+            error: insertError as Error,
+          } as DocActionResponse;
         }
 
         set({ documents: [newDocument] });
-        return;
+        return {
+          data: toCamelCase(newDocument) as Document,
+          error: null,
+        } as DocActionResponse;
       }
 
       if (data) set({ documents: [toCamelCase(data) as Document] });
+
+      return {
+        data: toCamelCase(data) as Document,
+        error: null,
+      };
     },
     loadRecentDocuments: async () => {
       const { data, error } = await supabaseClient
@@ -106,6 +131,37 @@ export const useDocumentsStore = create<DocumentsStore>((set) => {
         const documents = data.map((doc) => toCamelCase(doc) as Document);
         set({ documents: documents.map((doc) => ({ ...doc, name: doc.name || "" })) });
       }
+    },
+    loadDocument: async (documentId: string) => {
+      const { data, error } = await supabaseClient
+        .from(SupabaseTable.DOCUMENTS)
+        .select("*")
+        .eq("id", documentId)
+        .single();
+
+      console.log("fetched  document", data);
+      if (error) {
+        console.error("Error fetching document", error);
+        return { data: null, error: error as Error };
+      }
+
+      if (data) {
+        set((state) => {
+          const existingDocIndex = state.documents.findIndex((doc) => doc.id === documentId);
+          let documents;
+          if (existingDocIndex !== -1) {
+            documents = state.documents.map((doc) => (doc.id === documentId ? (toCamelCase(data) as Document) : doc));
+          } else {
+            documents = [...state.documents, toCamelCase(data) as Document];
+          }
+          return { documents };
+        });
+      }
+
+      return {
+        data: toCamelCase(data) as Document,
+        error: null,
+      };
     },
   };
 });

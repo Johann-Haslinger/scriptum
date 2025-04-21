@@ -5,6 +5,7 @@ import { createNewBlock } from "../../utils";
 import { BlockAreaWrapper } from "../edit-blocks-menu";
 import BlocksRenderer from "./BlocksRenderer";
 import DocumentHeader from "./DocumentHeader";
+import DocumentsHistory from "./DocumentsHistory";
 import { RubberBandSelector } from "./RubberBandSelector";
 
 const DocumentEditor = ({ document }: { document: Document }) => {
@@ -17,6 +18,7 @@ const DocumentEditor = ({ document }: { document: Document }) => {
   return (
     <RubberBandSelector blocksAreaRef={blocksAreaRef}>
       <BlockAreaWrapper ref={blocksAreaRef}>
+        <DocumentsHistory />
         <DocumentHeader document={document} />
         <BlocksRenderer documentId={id} />
       </BlockAreaWrapper>

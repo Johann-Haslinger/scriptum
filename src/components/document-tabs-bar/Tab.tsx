@@ -1,11 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { Command, Delete } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { IoClose } from "react-icons/io5";
-import { useOpenDocuments, useRootDocument } from "../../hooks";
-import { useDocumentsUIStore } from "../../store";
-import { Document } from "../../types";
+import { useDocumentsStore, useDocumentTabsStore } from "../../store";
+import { DocumentTab } from "../../types";
 import { Tooltip } from "../tooltip";
-import { Command, Delete } from "lucide-react";
 
 const useIsTextTruncated = (text: string) => {
   const [isTruncated, setIsTruncated] = useState(false);
@@ -20,30 +19,33 @@ const useIsTextTruncated = (text: string) => {
   return { isTruncated, textRef };
 };
 
-const DocumentTab = ({ document, index }: { document: Document; index: number }) => {
-  const { id, name } = document;
-  const { currentDocumentId, setCurrentDocument, setDocumentOpen } = useDocumentsUIStore();
-  const { rootDocumentId } = useRootDocument();
-  const isCurrent = currentDocumentId === id;
+const useTabText = (tab: DocumentTab) => {
+  const currentDoc = useDocumentsStore((state) => state.documents.find((doc) => doc.id === tab.current));
+  const currentDocName = currentDoc?.name || "Untitled";
+  const tabText = tab.history.length > 1 ? "/ " + currentDocName : currentDocName;
+
+  return tabText;
+};
+
+const Tab = ({ tab, index }: { tab: DocumentTab; index: number }) => {
+  const { id } = tab;
+  const tabText = useTabText(tab);
+  const { setCurrentTabId, currentTabId, tabs, closeTab } = useDocumentTabsStore();
+  const isCurrent = currentTabId === id;
   const [isHovered, setIsHovered] = useState(false);
   const isCloseIconVisible = isHovered || isCurrent;
-  const openDocuments = useOpenDocuments();
-  const isPlaceholderVisible = !name.trim();
-  const { isTruncated, textRef } = useIsTextTruncated(name);
+  const { isTruncated, textRef } = useIsTextTruncated(tabText);
   const [isCloseButtonHovered, setIsCloseButtonHovered] = useState(false);
 
-  const setDocumentCurrent = () => setCurrentDocument(id);
-  const closeDocument = () => {
-    const currentDocumentIndex = openDocuments.findIndex((doc) => doc.id === currentDocumentId);
+  const setTabCurrent = () => setCurrentTabId(id);
+  const handleCloseTab = () => {
+    const tabsArray = Object.values(tabs);
+    const currentDocumentIndex = tabsArray.findIndex((doc) => doc.id === currentTabId);
 
     if (isCurrent) {
-      if (currentDocumentIndex > 0) {
-        setCurrentDocument(openDocuments[currentDocumentIndex - 1].id);
-      } else {
-        setCurrentDocument(rootDocumentId);
-      }
+      setCurrentTabId(tabsArray[currentDocumentIndex - 1].id);
     }
-    setDocumentOpen(id, false);
+    closeTab(id);
   };
 
   const closeButtonVariants = {
@@ -55,10 +57,10 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
     <div>
       <motion.div
         onKeyDown={(e) => {
-          if (e.key === "Enter") setDocumentCurrent();
+          if (e.key === "Enter") setTabCurrent();
         }}
         tabIndex={3 + index * 2}
-        onClick={setDocumentCurrent}
+        onClick={setTabCurrent}
         onMouseDown={(e) => e.preventDefault()}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -85,7 +87,7 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
                 tabIndex={4 + index * 2}
                 onClick={(e) => {
                   e.stopPropagation();
-                  closeDocument();
+                  handleCloseTab();
                 }}
                 variants={closeButtonVariants}
                 initial="hidden"
@@ -98,24 +100,28 @@ const DocumentTab = ({ document, index }: { document: Document; index: number })
               >
                 <IoClose />
               </motion.button>
-              <Tooltip shortcut={[<Command key={1} size={14} />, <Delete key={1} size={14} />]}  place="bottom" id="close-document">
-                Close document
+              <Tooltip
+                shortcut={[<Command key={1} size={14} />, <Delete key={1} size={14} />]}
+                place="bottom"
+                id="close-tab"
+              >
+                Close Tab
               </Tooltip>
             </div>
           )}
         </AnimatePresence>
         <p ref={textRef} className="font-medium truncate w-full">
-          {isPlaceholderVisible ? "Untitled" : name}
+          {tabText}
         </p>
       </motion.div>
 
       {isTruncated && !isCloseButtonHovered && (
         <Tooltip place="bottom" id={`document-tab-${id}`}>
-          {name}
+          {tabText}
         </Tooltip>
       )}
     </div>
   );
 };
 
-export default DocumentTab;
+export default Tab;

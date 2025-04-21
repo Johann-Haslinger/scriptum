@@ -1,21 +1,35 @@
 import { DocumentBlock } from "@/types";
-import { File } from "lucide-react";
-import { useDocumentsUIStore } from "../../store";
+import { IoArrowForward } from "react-icons/io5";
+import { useDocumentsStore, useDocumentsUIStore } from "../../store";
 import BlockWrapper from "./BlockWrapper";
 
 const DocumentBlockComponent = ({ block }: { block: DocumentBlock }) => {
-  const { setCurrentDocument } = useDocumentsUIStore();
-  const { documentId, name } = block;
+  const { loadDocument } = useDocumentsStore();
+  const { openDocument } = useDocumentsUIStore();
+  const { refId, content } = block;
 
-  const handleOpenDocument = () => {
-    setCurrentDocument(documentId);
+  const handleOpenDocument = async () => {
+    const { data: doc, error } = await loadDocument(refId);
+    if (error) {
+      console.error("Error loading document", error);
+      return;
+    }
+    if (doc) {
+      console.log("Open doc", doc.name);
+      openDocument(doc.id);
+    }
   };
 
   return (
     <BlockWrapper block={block}>
-      <div onClick={handleOpenDocument} className="flex">
-        <File />
-        {name}
+      <div onClick={handleOpenDocument} className="flex items-center cursor-pointer">
+        <div className="text-xl opacity-70 mr-3">
+          <IoArrowForward />
+        </div>
+        <div>
+          <p className="font-semibold truncate">{content}</p>
+          <p className="opacity-40 text-sm">Click to open document</p>
+        </div>
       </div>
     </BlockWrapper>
   );

@@ -1,9 +1,16 @@
 import debounce from "lodash.debounce";
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useBlockEditorState, useCurrentBlocks, useOutsideClick, useRootDocument } from "../../hooks";
-import { useBlocksStore, useBlocksUIStore, useCommandMenuUIStore, useDocumentsUIStore } from "../../store";
-import { Block, BlockEditorState, BlockType, TextBlock } from "../../types";
-import { createNewBlock } from "../../utils";
+import {
+  useBlocksStore,
+  useBlocksUIStore,
+  useCommandMenuUIStore,
+  useDocumentsStore,
+  useDocumentsUIStore,
+  useUserStore,
+} from "../../store";
+import { Block, BlockEditorState, BlockType, DocumentBlock, TextBlock } from "../../types";
+import { createNewBlock, createNewDocument } from "../../utils";
 
 type ContentEditableBlock = TextBlock;
 
@@ -48,13 +55,12 @@ const BlockContentEditor = React.memo(({ block }: { block: ContentEditableBlock 
   useArrowKeyHandler(editorRef, block);
   useEscapeKeyHandler(editorRef, block);
   useOutsideClick(editorRef, () => setFocused(null), isFocused && !isCommandMenuOpen);
+  useChangeBlockTypeHandler(editorRef, block);
 
   return (
     <div
       ref={editorRef}
-      className={`${!isEditable && "select-none"} ${
-        isFocused && "bg-amber-200/5"
-      } w-full h-full min-h-8 py-1 outline-none cursor-text select-text`}
+      className={`${!isEditable && "select-none"} w-full h-full min-h-8 py-1 outline-none cursor-text select-text`}
       onMouseDown={handleMouseEvents.handleMouseDown}
       onMouseUp={handleMouseEvents.handleMouseUp}
       onFocus={handleFocus}
@@ -68,35 +74,52 @@ const BlockContentEditor = React.memo(({ block }: { block: ContentEditableBlock 
   );
 });
 
-// const useChangeBlockTypeHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
-//   const { id, type } = block;
-//   const { setFocused } = useBlocksUIStore();
-//   const isShortcutActive = useIsShortCurActive(id);
-//   const currentBlocks = useCurrentBlocks();
-//   const { updateBlock } = useBlocksStore();
+const useChangeBlockTypeHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
+  const { id, type } = block;
+  const isShortcutActive = useIsShortCurActive(id);
+  const { updateBlock } = useBlocksStore();
+  const { userId } = useUserStore();
+  const { addDocument } = useDocumentsStore();
+  const { setCurrentDocument } = useDocumentsUIStore();
 
-//   const handleKeyDown = useCallback(
-//     (event: KeyboardEvent) => {
-//       if (event.key === "-" && editorRef.current?.innerText === "") {
-//         event.preventDefault();
-//         updateBlock({ ...block, type: BlockType.LIST_ITEM });
-//       }
-//     },
-//     [block, type, updateBlock]
-//   );
+  const handleKeyDown = useCallback(
+    async (event: KeyboardEvent) => {
+      const editorText = editorRef.current?.innerText || "";
+      if (event.key === "-" && editorText === "") {
+        console.log("List");
+      }
+      if (event.key == "d" && event.ctrlKey) {
+        console.log("Document");
+        event.preventDefault();
+        const newDocument = createNewDocument(userId);
+        newDocument.name = block.content;
 
-//   useEffect(() => {
-//     if (isShortcutActive && editorRef.current) {
-//       editorRef.current.addEventListener("keydown", handleKeyDown);
-//     }
+        const updatedBlock = {
+          ...block,
+          type: BlockType.DOCUMENT,
+          refId: newDocument.id,
+        } as DocumentBlock;
 
-//     return () => {
-//       if (editorRef.current) {
-//         editorRef.current.removeEventListener("keydown", handleKeyDown);
-//       }
-//     };
-//   }, [isShortcutActive, editorRef, handleKeyDown]);
-// };
+        await addDocument(newDocument);
+        updateBlock(updatedBlock);
+        setCurrentDocument(newDocument.id);
+      }
+    },
+    [block, type, updateBlock]
+  );
+
+  useEffect(() => {
+    if (isShortcutActive && editorRef.current) {
+      editorRef.current.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      if (editorRef.current) {
+        editorRef.current.removeEventListener("keydown", handleKeyDown);
+      }
+    };
+  }, [isShortcutActive, editorRef, handleKeyDown]);
+};
 
 const useContentUpdateHandler = (editorRef: RefObject<HTMLDivElement | null>, block: ContentEditableBlock) => {
   const { focusedBlockId } = useBlocksUIStore();
