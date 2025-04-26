@@ -3,12 +3,17 @@ import { create } from "zustand";
 import supabaseClient from "../lib/supabase";
 import { toCamelCase, toSnakeCase } from "../utils";
 
+interface Response {
+  data: Block[] | null;
+  error: Error | null;
+}
+
 type BlocksStore = {
   blocks: Block[];
   addBlock: (block: Block) => void;
   updateBlock: (block: Block) => void;
   deleteBlock: (id: string) => void;
-  loadDocumentBlocks: (documentId: string) => Promise<Boolean>;
+  loadDocumentBlocks: (documentId: string) => Promise<Response>;
 };
 
 export const useBlocksStore = create<BlocksStore>((set) => {
@@ -51,15 +56,20 @@ export const useBlocksStore = create<BlocksStore>((set) => {
 
       if (error) {
         console.error("Error loading blocks", error);
-        return false;
+        return { data: null, error: error };
       }
 
       if (data) {
-        const blocks = data.map((b) => toCamelCase(b) as Block);
-        set({ blocks: blocks });
+        const blocks = data.map((b) => toCamelCase(b) as Block).sort((a, b) => a.order - b.order);
+        set((state) => ({
+          blocks: [...state.blocks.filter((b) => b.documentId !== documentId), ...blocks],
+        }));
       }
 
-      return data.length > 0;
+      return {
+        data,
+        error: null,
+      };
     },
   };
 });

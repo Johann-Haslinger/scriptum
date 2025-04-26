@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { useDocumentsStore, useDocumentsUIStore, useDocumentTabsStore, useUserStore } from "../store";
+import { HOME_TAB_ID, useDocumentsStore, useDocumentTabsStore, useUserStore } from "../store";
+import { useCurrentDocument } from "./useCurrentDocument";
 
 export const useDocumentEntry = () => {
   const { loadRootDocument, loadRecentDocuments, loadDocument } = useDocumentsStore();
-  const { setCurrentDocument, currentDocumentId } = useDocumentsUIStore();
+  const { openDocument, currentTabId } = useDocumentTabsStore();
+  const { currentDocumentId } = useCurrentDocument();
   const { userId } = useUserStore();
-  const { createTab, tabs } = useDocumentTabsStore();
+  const { createTab } = useDocumentTabsStore();
 
   useEffect(() => {
     const loadDocEntry = async () => {
@@ -27,18 +29,14 @@ export const useDocumentEntry = () => {
 
         if (doc) {
           console.log("Document loaded", doc);
-          setCurrentDocument(doc.id);
+          openDocument(currentTabId, doc.id);
           currentDoc = doc;
         }
       } else {
         if (rootDoc) {
-          setCurrentDocument(rootDoc.id);
+          createTab(HOME_TAB_ID, rootDoc.id);
           currentDoc = rootDoc;
         }
-      }
-
-      if (Object.values(tabs).length === 0) {
-        createTab(crypto.randomUUID(), currentDoc?.id);
       }
     };
 

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect } from "react";
 import { useBlockEditorState } from "../../hooks";
-import { useCommandMenuUIStore, useDocumentTabsStore } from "../../store";
+import { HOME_TAB_ID, useBlocksUIStore, useCommandMenuUIStore, useDocumentTabsStore } from "../../store";
 import { BlockEditorState } from "../../types";
 import RootDocumentTab from "./RootDocumentTab";
 import SearchDocumentButton from "./SearchDocumentButton";
@@ -16,7 +17,7 @@ const DocumentTabsBar = () => {
     visible: { y: 0, opacity: 1, scale: 1 },
   };
 
-  // useTabNavigation();
+  useTabNavigation();
 
   return (
     <AnimatePresence>
@@ -32,6 +33,7 @@ const DocumentTabsBar = () => {
           {Object.values(tabs).length > 0 && (
             <div className="flex ml-2 space-x-2">
               {Object.values(tabs)
+                .filter((tab) => tab.id !== HOME_TAB_ID)
                 .slice(Math.max(Object.values(tabs).length - 7, 0), Object.values(tabs).length)
                 .map((tab, idx) => (
                   <Tab index={idx} tab={tab} key={tab.id} />
@@ -47,73 +49,69 @@ const DocumentTabsBar = () => {
 
 export default DocumentTabsBar;
 
-// const useTabNavigation = () => {
-//   const { setCurrentTabId, tabs } = useDocumentTabsStore();
-//   const openDocuments = useOpenDocuments();
-//   const { rootDocumentId, isRootDocumentCurrent } = useRootDocument();
-//   const blockEditorState = useBlockEditorState();
-//   const isCommandMenuOpen = useCommandMenuUIStore((state) => state.isCommandMenuOpen);
-//   const { focusedBlockId } = useBlocksUIStore();
+const useTabNavigation = () => {
+  const { tabs, currentTabId, setCurrentTabId, closeTab } = useDocumentTabsStore();
 
-//   useEffect(() => {
-//     const handleKeyDown = (e: KeyboardEvent) => {
-//       if (blockEditorState !== BlockEditorState.VIEWING || isCommandMenuOpen) return;
+  const blockEditorState = useBlockEditorState();
+  const isCommandMenuOpen = useCommandMenuUIStore((state) => state.isCommandMenuOpen);
+  const { focusedBlockId } = useBlocksUIStore();
 
-//       if (e.metaKey && e.key === "1") {
-//         setCurrentTabId(rootDocumentId);
-//       }
+  const tabIds = tabs.map((tab) => tab.id);
+  const currentIndex = tabIds.findIndex((id) => id === currentTabId);
 
-//       tabs.forEach((doc, idx) => {
-//         if (e.metaKey && e.key === `${idx + 2}`) {
-//           setCurrentTabId(doc.id);
-//         }
-//       });
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (blockEditorState !== BlockEditorState.VIEWING || isCommandMenuOpen) return;
 
-//       if (openDocuments.length === 0) return;
+      // CMD + 2 → Tab 1, CMD + 3 → Tab 2 ...
+      if (e.metaKey && /^[1-9]$/.test(e.key)) {
+        const index = parseInt(e.key) - 1;
+        const tabId = tabIds[index];
+        if (tabId) setCurrentTabId(tabId);
+        console.log("CMD + 2-9", { currentTabId, currentIndex });
+        return;
+      }
 
-//       const currentDocumentIndex = openDocuments.findIndex((doc) => doc.id === currentDocumentId);
-//       if (e.key === "ArrowLeft" && e.metaKey) {
-//         if (currentDocumentIndex > 0) {
-//           setCurrentTabId(openDocuments[currentDocumentIndex - 1]?.id);
-//         } else if (isRootDocumentCurrent) {
-//           setCurrentTabId(openDocuments[openDocuments.length - 1]?.id);
-//         } else {
-//           setCurrentTabId(rootDocumentId);
-//         }
-//       } else if (e.key === "ArrowRight" && e.metaKey) {
-//         if (currentDocumentIndex >= 0 && currentDocumentIndex < openDocuments.length - 1) {
-//           setCurrentTabId(openDocuments[currentDocumentIndex + 1].id);
-//         } else if (currentDocumentIndex === openDocuments.length - 1) {
-//           setCurrentTabId(rootDocumentId);
-//         } else if (isRootDocumentCurrent) {
-//           setCurrentTabId(openDocuments[0]?.id || rootDocumentId);
-//         }
-//       } else if (e.key === "Backspace" && e.metaKey) {
-//         if (e.shiftKey) {
-//           openDocuments.forEach((doc) => setDocumentOpen(doc.id, false));
-//           setCurrentTabId(rootDocumentId);
-//         } else if (currentDocumentId !== rootDocumentId) {
-//           if (currentDocumentIndex > 0) {
-//             setCurrentTabId(openDocuments[currentDocumentIndex - 1]?.id);
-//           } else {
-//             setCurrentTabId(rootDocumentId);
-//           }
-//           if (currentDocumentId) setDocumentOpen(currentDocumentId, false);
-//         }
-//       }
-//     };
+      // CMD + ← → Zyklisch durch Tabs
+      if (e.metaKey && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+        const index = tabs.findIndex((tab) => tab.id === currentTabId);
+        console.log("index", index);
+        console.log("CMD + ArrowLeft/ArrowRight", { currentTabId, currentIndex });
+        if (currentIndex !== -1) {
+          const nextIndex =
+            e.key === "ArrowLeft"
+              ? (currentIndex - 1 + tabIds.length) % tabIds.length
+              : (currentIndex + 1) % tabIds.length;
 
-//     window.addEventListener("keydown", handleKeyDown);
-//     return () => window.removeEventListener("keydown", handleKeyDown);
-//   }, [
-//     currentDocumentId,
-//     setCurrentTabId,
-//     rootDocumentId,
-//     blockEditorState,
-//     isRootDocumentCurrent,
-//     openDocuments,
-//     setDocumentOpen,
-//     isCommandMenuOpen,
-//     focusedBlockId,
-//   ]);
-// };
+          const nextTabId = tabIds[nextIndex];
+          console.log("nextTabId", nextTabId);
+          if (nextTabId) setCurrentTabId(nextTabId);
+        }
+        return;
+      }
+
+      // CMD + ⌫ → Aktuellen Tab schließen (außer Home)
+      if (e.metaKey && e.key === "Backspace" && !e.shiftKey) {
+        if (currentTabId !== HOME_TAB_ID) {
+          const remainingTabs = tabIds.filter((id) => id !== currentTabId);
+          const fallbackTabId = remainingTabs[currentIndex - 1] || HOME_TAB_ID;
+
+          closeTab(currentTabId);
+          setCurrentTabId(fallbackTabId);
+        }
+        return;
+      }
+
+      // CMD + SHIFT + ⌫ → Alle schließen außer Home
+      if (e.metaKey && e.shiftKey && e.key === "Backspace") {
+        tabIds.forEach((id) => {
+          if (id !== HOME_TAB_ID) closeTab(id);
+        });
+        setCurrentTabId(HOME_TAB_ID);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [tabs, currentTabId, setCurrentTabId, closeTab, blockEditorState, isCommandMenuOpen, focusedBlockId]);
+};

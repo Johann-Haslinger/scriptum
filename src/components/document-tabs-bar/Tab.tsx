@@ -22,7 +22,7 @@ const useIsTextTruncated = (text: string) => {
 const useTabText = (tab: DocumentTab) => {
   const currentDoc = useDocumentsStore((state) => state.documents.find((doc) => doc.id === tab.current));
   const currentDocName = currentDoc?.name || "Untitled";
-  const tabText = tab.history.length > 1 ? "/ " + currentDocName : currentDocName;
+  const tabText = tab.history.length > 1 ? "... / " + currentDocName : currentDocName;
 
   return tabText;
 };

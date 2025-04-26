@@ -5,10 +5,11 @@ import {
   useBlockEditorState,
   useBlockSelectionByKeyPress,
   useCurrentBlocks,
+  useCurrentDocument,
   useDisableZoomAndScrollOnTouch,
   useDocumentEntry,
 } from "@/hooks";
-import { useBlocksUIStore, useDocumentsStore, useDocumentsUIStore, useUserStore } from "../store";
+import { useBlocksUIStore, useDocumentsStore, useUserStore } from "../store";
 import { BlockEditorState } from "../types";
 import { AuthUI } from "./auth-ui";
 import { CommandMenu } from "./command-menu";
@@ -24,7 +25,7 @@ export default function BlockEditor() {
   const blockEditorState = useBlockEditorState();
   const isUserLoggedIn = useUserStore((state) => state.isUserLoggedIn);
   const { documents } = useDocumentsStore();
-  const { currentDocumentId } = useDocumentsUIStore();
+  const { currentDocumentId } = useCurrentDocument();
   const currentDocument = useMemo(() => {
     return documents.find((doc) => doc.id === currentDocumentId);
   }, [documents, currentDocumentId]);
@@ -34,10 +35,6 @@ export default function BlockEditor() {
   useBlockSelectionByKeyPress();
   useAuthManager();
   useBlockFocusEntry();
-
-  useEffect(() => {
-    console.log("selected", currentDocument), currentDocumentId;
-  }, [currentDocument, currentDocumentId]);
 
   return isUserLoggedIn == false ? (
     <AuthUI />
@@ -84,6 +81,7 @@ const useBlockFocusEntry = () => {
     };
   }, [currentBlocks, focusedBlockId]);
 };
+
 const DocumentLoadingState = () => {
   const [loading, setLoading] = useState(true);
   const [loadFailed, setLoadFailed] = useState(false);

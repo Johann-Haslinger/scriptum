@@ -1,12 +1,13 @@
 import debounce from "lodash.debounce";
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useBlockEditorState, useCurrentBlocks, useOutsideClick, useRootDocument } from "../../hooks";
+import { useBlockEditorState, useCurrentBlocks, useHomeTab, useOutsideClick } from "../../hooks";
 import {
   useBlocksStore,
   useBlocksUIStore,
   useCommandMenuUIStore,
   useDocumentsStore,
   useDocumentsUIStore,
+  useDocumentTabsStore,
   useUserStore,
 } from "../../store";
 import { Block, BlockEditorState, BlockType, DocumentBlock, TextBlock } from "../../types";
@@ -80,7 +81,7 @@ const useChangeBlockTypeHandler = (editorRef: RefObject<HTMLDivElement | null>, 
   const { updateBlock } = useBlocksStore();
   const { userId } = useUserStore();
   const { addDocument } = useDocumentsStore();
-  const { setCurrentDocument } = useDocumentsUIStore();
+  const { openDocument, currentTabId } = useDocumentTabsStore();
 
   const handleKeyDown = useCallback(
     async (event: KeyboardEvent) => {
@@ -102,7 +103,7 @@ const useChangeBlockTypeHandler = (editorRef: RefObject<HTMLDivElement | null>, 
 
         await addDocument(newDocument);
         updateBlock(updatedBlock);
-        setCurrentDocument(newDocument.id);
+        openDocument(currentTabId, newDocument.id);
       }
     },
     [block, type, updateBlock]
@@ -251,7 +252,7 @@ const useBackspaceKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, blo
   const currentBlocks = useCurrentBlocks();
   const { deleteBlock } = useBlocksStore();
   const { setIsEditingCurrentDocumentName } = useDocumentsUIStore();
-  const { isRootDocumentCurrent } = useRootDocument();
+  const { isHomeTabCurrent } = useHomeTab();
 
   const handleBackspace = useCallback(
     (event: KeyboardEvent) => {
@@ -266,7 +267,7 @@ const useBackspaceKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, blo
           setFocused(blockAbove.id);
           deleteBlock(block.id);
           setInitialFocusedCursorPosition(blockAbove.content.length);
-        } else if (!blockAbove && !isRootDocumentCurrent) {
+        } else if (!blockAbove && !isHomeTabCurrent) {
           if (blockContent.trim() === "") {
             setIsEditingCurrentDocumentName(true);
             setFocused(null);
@@ -283,7 +284,7 @@ const useBackspaceKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, blo
       deleteBlock,
       setFocused,
       setIsEditingCurrentDocumentName,
-      isRootDocumentCurrent,
+      isHomeTabCurrent,
       setInitialFocusedCursorPosition,
     ]
   );
@@ -314,7 +315,7 @@ const useArrowKeyHandler = (editorRef: RefObject<HTMLDivElement | null>, block: 
 
         const blockAbove = findBlockAbove(currentBlocks, block);
         const blockBelow = findBlockBelow(currentBlocks, block);
-
+        console.log({ blockAbove, blockBelow }, "Arrow press");
         if (!event.shiftKey) {
           if (event.key === "ArrowUp" && blockAbove) {
             setFocused(blockAbove.id);

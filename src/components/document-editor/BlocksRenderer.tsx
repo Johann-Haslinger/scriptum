@@ -1,7 +1,7 @@
 "use client";
 
 import { useBlocksStore, useBlocksUIStore } from "@/store";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import BlockComponentMatcher from "./BlockComponentMatcher";
 import DragAndDropWrapper from "./DragAndDropWrapper";
 import Draggable from "./Draggable";
@@ -38,8 +38,12 @@ const useDocumentBlocks = (documentId: string) => {
   const { blocks } = useBlocksStore();
   const documentBlocks = useMemo(
     () => blocks.filter((block) => block.documentId === documentId).sort((a, b) => a.order - b.order),
-    [blocks, documentId]
+    [blocks]
   );
+
+  useEffect(() => {
+    console.log("Document blocks updated:", documentBlocks);
+  }, []);
 
   return documentBlocks;
 };

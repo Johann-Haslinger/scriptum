@@ -1,4 +1,5 @@
 import { compareDesc, format, isToday, isYesterday, parseISO } from "date-fns";
+import { useMemo } from "react";
 import { useDocumentsStore } from "../../store";
 import { Document } from "../../types";
 import AddDocumentButton from "./AddDocumentButton";
@@ -6,7 +7,7 @@ import DocumentItem from "./DocumentItem";
 
 const RecentDocumentList = () => {
   const documents = useDocumentsStore((state) => state.documents);
-  const groupedDocs = groupAndSortDocuments(documents);
+  const groupedDocs = useMemo(() => groupAndSortDocuments(documents), [documents]);
 
   return (
     <ul className="px-4 pb-4 w-full">

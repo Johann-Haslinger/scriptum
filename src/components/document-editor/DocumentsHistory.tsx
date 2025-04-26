@@ -1,19 +1,18 @@
 import { useCurrentDocument } from "../../hooks";
-import { useDocumentsStore, useDocumentsUIStore } from "../../store";
+import { useDocumentsStore, useDocumentTabsStore } from "../../store";
 import { Document } from "../../types";
 
 const DocumentsHistory = () => {
-  const { history } = useDocumentsUIStore();
   const { documents } = useDocumentsStore();
-  const { isRootDocumentCurrent } = useCurrentDocument();
+  const tab = useCurrentTab();
 
   return (
-    !isRootDocumentCurrent && (
+    (tab?.history?.length ?? 0) > 0 && (
       <div className="flex md:pl-8 select-none">
-        {history.map((docId) => (
-          <DocumentItem key={docId} document={documents.find((doc) => doc.id === docId) as Document} />
+        {tab?.history.map((docId, idx) => (
+          <DocumentItem key={idx} document={documents.find((doc) => doc.id === docId) as Document} />
         ))}
-        ^
+
         <CurrentDocumentItem />
       </div>
     )
@@ -23,11 +22,11 @@ const DocumentsHistory = () => {
 export default DocumentsHistory;
 
 const DocumentItem = ({ document }: { document: Document }) => {
-  const { goBack } = useDocumentsUIStore();
+  const { goBack, currentTabId } = useDocumentTabsStore();
   const { id, name } = document;
 
   const handleOpenDocument = () => {
-    goBack(id);
+    goBack(currentTabId, id);
   };
   return (
     <div onClick={handleOpenDocument} className="opacity-40 cursor-pointer hover:opacity-60 active:opacity-20 mr-2">
@@ -37,11 +36,18 @@ const DocumentItem = ({ document }: { document: Document }) => {
 };
 
 const CurrentDocumentItem = () => {
-  const { document } = useCurrentDocument();
+  const { currentDocument } = useCurrentDocument();
 
   return (
     <div className="cursor-default">
-      <span>{document?.name}</span>
+      <span>{currentDocument?.name}</span>
     </div>
   );
+};
+
+const useCurrentTab = () => {
+  const { currentTabId } = useDocumentTabsStore();
+  const currentTab = useDocumentTabsStore((state) => state.tabs.find((tab) => tab.id === currentTabId));
+
+  return currentTab;
 };

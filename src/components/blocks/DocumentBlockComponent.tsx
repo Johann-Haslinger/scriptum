@@ -1,11 +1,11 @@
 import { DocumentBlock } from "@/types";
 import { IoArrowForward } from "react-icons/io5";
-import { useDocumentsStore, useDocumentsUIStore } from "../../store";
+import { useDocumentsStore, useDocumentTabsStore } from "../../store";
 import BlockWrapper from "./BlockWrapper";
 
 const DocumentBlockComponent = ({ block }: { block: DocumentBlock }) => {
   const { loadDocument } = useDocumentsStore();
-  const { openDocument } = useDocumentsUIStore();
+  const { openDocument, currentTabId } = useDocumentTabsStore();
   const { refId, content } = block;
 
   const handleOpenDocument = async () => {
@@ -16,7 +16,7 @@ const DocumentBlockComponent = ({ block }: { block: DocumentBlock }) => {
     }
     if (doc) {
       console.log("Open doc", doc.name);
-      openDocument(doc.id);
+      openDocument(currentTabId, doc.id);
     }
   };
 
