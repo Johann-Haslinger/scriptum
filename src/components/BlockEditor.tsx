@@ -14,7 +14,7 @@ import { BlockEditorState } from "../types";
 import { AuthUI } from "./auth-ui";
 import { CommandMenu } from "./command-menu";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { CgSpinner } from "react-icons/cg";
 import { DocumentEditor } from "./document-editor";
 import SelectionControlWrapper from "./document-editor/SelectionControlWrapper";
@@ -25,10 +25,7 @@ export default function BlockEditor() {
   const blockEditorState = useBlockEditorState();
   const isUserLoggedIn = useUserStore((state) => state.isUserLoggedIn);
   const { documents } = useDocumentsStore();
-  const { currentDocumentId } = useCurrentDocument();
-  const currentDocument = useMemo(() => {
-    return documents.find((doc) => doc.id === currentDocumentId);
-  }, [documents, currentDocumentId]);
+  const { currentDocument } = useCurrentDocument();
 
   useDisableZoomAndScrollOnTouch();
   useDocumentEntry();
@@ -45,7 +42,7 @@ export default function BlockEditor() {
       <SelectionControlWrapper>
         {currentDocument ? (
           documents.map(
-            (doc) => doc.id == currentDocumentId && <DocumentEditor key={doc.id} document={currentDocument} />
+            (doc) => doc.id == currentDocument.id && <DocumentEditor key={doc.id} document={currentDocument} />
           )
         ) : (
           <DocumentLoadingState />
