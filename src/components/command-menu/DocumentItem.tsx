@@ -1,6 +1,6 @@
 import { CornerDownLeft, File } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useCommandMenuUIStore, useDocumentsUIStore } from "../../store";
+import { useCommandMenuUIStore, useDocumentTabsStore } from "../../store";
 import { Document } from "../../types";
 
 const DocumentItem = ({ document }: { document: Document }) => {
@@ -12,13 +12,12 @@ const DocumentItem = ({ document }: { document: Document }) => {
     setIsCommandMenuOpen,
   } = useCommandMenuUIStore();
   const hasMouseMoved = useHasMouseMoved();
-  const { setCurrentDocument, setDocumentOpen } = useDocumentsUIStore();
+  const { createTab } = useDocumentTabsStore();
   const isFocused = focusedDocumentId === id;
   const isPlaceholderVisible = !name.trim();
 
   const openDocument = () => {
-    setCurrentDocument(id);
-    setDocumentOpen(id, true);
+    createTab(crypto.randomUUID(), id);
     setIsCommandMenuOpen(false);
   };
 

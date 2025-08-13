@@ -22,8 +22,8 @@ export interface ImageBlock extends BlockBase {
 
 export interface DocumentBlock extends BlockBase {
   type: BlockType.DOCUMENT;
-  name: string;
-  documentId: string;
+  content: string;
+  refId: string;
 }
 
 export type Block = TextBlock | ImageBlock | DocumentBlock;

@@ -5,6 +5,7 @@ import { createNewBlock } from "../../utils";
 import { BlockAreaWrapper } from "../edit-blocks-menu";
 import BlocksRenderer from "./BlocksRenderer";
 import DocumentHeader from "./DocumentHeader";
+import DocumentsHistory from "./DocumentsHistory";
 import { RubberBandSelector } from "./RubberBandSelector";
 
 const DocumentEditor = ({ document }: { document: Document }) => {
@@ -17,6 +18,7 @@ const DocumentEditor = ({ document }: { document: Document }) => {
   return (
     <RubberBandSelector blocksAreaRef={blocksAreaRef}>
       <BlockAreaWrapper ref={blocksAreaRef}>
+        <DocumentsHistory />
         <DocumentHeader document={document} />
         <BlocksRenderer documentId={id} />
       </BlockAreaWrapper>
@@ -35,12 +37,17 @@ const useFetchDocumentBlocks = (documentId: string) => {
   useEffect(() => {
     const fetchBlocks = async () => {
       if (hasFetchedBlocks.current) return;
-      const hasDocumentBlocks = await loadDocumentBlocks(documentId);
+      const { data: blocks } = await loadDocumentBlocks(documentId);
 
-      if (!hasDocumentBlocks) {
+      if (!(blocks && blocks.length > 0)) {
         const block = createNewBlock(documentId);
         addBlock({ ...block, order: 1, content: "" } as TextBlock);
         setFocused(block.id);
+        console.log("No blocks found, created a new block:", block);
+      }
+
+      if (blocks) {
+        setFocused(blocks[blocks.length - 1].id);
       }
 
       hasFetchedBlocks.current = true;

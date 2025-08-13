@@ -1,7 +1,7 @@
 import { compareDesc, parseISO } from "date-fns";
 import { AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
-import { useCommandMenuUIStore, useDocumentsStore, useDocumentsUIStore, useUserStore } from "../../store";
+import { useCommandMenuUIStore, useDocumentsStore, useDocumentTabsStore, useUserStore } from "../../store";
 import { createNewDocument } from "../../utils";
 import BackgroundOverlay from "./BackgroundOverlay";
 import CommandMenuInput from "./CommandMenuInput";
@@ -15,6 +15,8 @@ const CommandMenu = () => {
   useCommandMenuKeyboardNavigation();
   useDocumentFocus();
   useSearchQueryReset();
+  useRecentDocuments();
+  useVisibleDocuments();
 
   return (
     <div>
@@ -43,7 +45,7 @@ const useSearchQueryReset = () => {
 
 const useCommandMenuKeyboardNavigation = () => {
   const { isCommandMenuOpen, setIsCommandMenuOpen, focusedMenuItem } = useCommandMenuUIStore();
-  const { setCurrentDocument, setDocumentOpen } = useDocumentsUIStore();
+  const { createTab } = useDocumentTabsStore();
   const { addDocument } = useDocumentsStore();
   const userId = useUserStore((state) => state.userId);
 
@@ -63,12 +65,10 @@ const useCommandMenuKeyboardNavigation = () => {
         if (focusedMenuItem === "new-document") {
           const newDoc = createNewDocument(userId);
           addDocument(newDoc);
-          setCurrentDocument(newDoc.id);
-          setDocumentOpen(newDoc.id, true);
+          createTab(crypto.randomUUID(), newDoc.id);
           setIsCommandMenuOpen(false);
         } else {
-          setCurrentDocument(focusedMenuItem);
-          setDocumentOpen(focusedMenuItem, true);
+          createTab(crypto.randomUUID(), focusedMenuItem);
           setIsCommandMenuOpen(false);
         }
       }
@@ -78,15 +78,7 @@ const useCommandMenuKeyboardNavigation = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [
-    isCommandMenuOpen,
-    setIsCommandMenuOpen,
-    focusedMenuItem,
-    setCurrentDocument,
-    addDocument,
-    setDocumentOpen,
-    userId,
-  ]);
+  }, [isCommandMenuOpen, setIsCommandMenuOpen, focusedMenuItem, createTab, addDocument, , userId]);
 };
 
 const useDocumentFocus = () => {
@@ -143,4 +135,13 @@ const useVisibleDocuments = () => {
     .sort((a, b) => {
       return compareDesc(parseISO(a.updatedAt), parseISO(b.updatedAt));
     });
+};
+
+const useRecentDocuments = () => {
+  const { loadRecentDocuments } = useDocumentsStore();
+  const { isCommandMenuOpen } = useCommandMenuUIStore();
+
+  useEffect(() => {
+    if (isCommandMenuOpen) loadRecentDocuments();
+  }, [loadRecentDocuments, isCommandMenuOpen]);
 };

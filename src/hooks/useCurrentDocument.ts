@@ -1,18 +1,16 @@
-import { useDocumentsStore, useDocumentsUIStore } from "../store";
+import { useMemo } from "react";
+import { useDocumentsStore, useDocumentTabsStore } from "../store";
 
 export const useCurrentDocument = () => {
-  const { currentDocumentId, setCurrentDocument } = useDocumentsUIStore();
-  const { documents } = useDocumentsStore();
-  const document = documents.find((doc) => doc.id === currentDocumentId);
-  const isRootDocumentCurrent = document?.type === "root";
+  const { currentTabId, tabs } = useDocumentTabsStore();
 
-  const setDocument = (documentId: string) => {
-    setCurrentDocument(documentId);
-  };
-
+  const currentTab = useMemo(() => {
+    return tabs.find((tab) => tab.id === currentTabId);
+  }, [currentTabId, tabs]);
+  const currentDocumentId = currentTab?.current || null;
+  const currentDocument = useDocumentsStore((state) => state.documents.find((doc) => doc.id === currentDocumentId));
   return {
-    document,
-    setDocument,
-    isRootDocumentCurrent,
+    currentDocumentId,
+    currentDocument,
   };
 };

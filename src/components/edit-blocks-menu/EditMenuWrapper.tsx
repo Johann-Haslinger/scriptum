@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { PropsWithChildren, RefObject, useEffect, useRef, useState } from "react";
+import { useOutsideClick } from "../../hooks";
 import { useBlocksStore, useBlocksUIStore } from "../../store";
 import { useEditMenuUIStore } from "../../store/editMenuUIStore";
 
@@ -10,8 +11,17 @@ const EditMenuWrapper = ({ children }: PropsWithChildren) => {
   const leftDistance = useLeftDistance(menuWidth);
   const isAnEditOptionSelected = useIsAnOptionSelected();
   const editMenuRef = useRef<HTMLDivElement | null>(null);
+  const { setSelected } = useBlocksUIStore();
+  const { selectedBlockIds } = useBlocksUIStore();
 
   useEditMenuOutsideClickHandler(editMenuRef, true);
+  useOutsideClick(
+    editMenuRef,
+    () => {
+      Object.keys(selectedBlockIds).forEach((blockId: string) => setSelected(blockId, false));
+    },
+    true
+  );
 
   const editMenuVariants = {
     hidden: {

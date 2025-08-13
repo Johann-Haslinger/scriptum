@@ -1,16 +1,18 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { IoHome } from "react-icons/io5";
-import { useRootDocument } from "../../hooks";
-import { useDocumentsUIStore } from "../../store";
+import { HOME_TAB_ID, useDocumentTabsStore } from "../../store";
 
 const RootDocumentTab = () => {
-  const { isRootDocumentCurrent, rootDocumentId } = useRootDocument();
-  const { setCurrentDocument } = useDocumentsUIStore();
+  const { isHomeTabCurrent } = useHomeTab();
+  const { setCurrentTabId, tabs } = useDocumentTabsStore();
   const [isHovered, setIsHovered] = useState(false);
-  const isHomeTextVisible = isHovered || isRootDocumentCurrent;
+  const isHomeTextVisible = isHovered || isHomeTabCurrent;
 
-  const openRootDocument = () => setCurrentDocument(rootDocumentId);
+  const openRootDocument = () => {
+    console.log("tabs", tabs);
+    setCurrentTabId(HOME_TAB_ID);
+  };
 
   const homeTextVariants = {
     hidden: { opacity: 0, width: 0, marginLeft: 0 },
@@ -32,7 +34,7 @@ const RootDocumentTab = () => {
         onMouseDown={(e) => e.preventDefault()}
         data-tooltip-id="open-root-document"
         className={`${
-          isRootDocumentCurrent
+          isHomeTabCurrent
             ? "bg-black/10 dark:bg-white/15 text-black/80 dark:text-white"
             : "bg-black/5 dark:bg-white/[0.07] hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer text-black/40 dark:text-white/70"
         } overflow-hidden h-9 focus:outline-2 outline-blue-500/40 outline-offset-1 flex rounded-full py-1 items-center px-3`}
@@ -57,3 +59,14 @@ const RootDocumentTab = () => {
 };
 
 export default RootDocumentTab;
+
+const useHomeTab = () => {
+  const { tabs, currentTabId } = useDocumentTabsStore();
+  const homeTab = tabs.find((tab) => tab.id === HOME_TAB_ID);
+  const isHomeTabCurrent = currentTabId === HOME_TAB_ID;
+
+  return {
+    homeTab,
+    isHomeTabCurrent,
+  };
+};
