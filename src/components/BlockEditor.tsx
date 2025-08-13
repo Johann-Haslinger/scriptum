@@ -11,7 +11,6 @@ import {
 } from "@/hooks";
 import { useBlocksUIStore, useDocumentsStore, useUserStore } from "../store";
 import { BlockEditorState } from "../types";
-import { AuthUI } from "./auth-ui";
 import { CommandMenu } from "./command-menu";
 
 import { useEffect, useState } from "react";
@@ -33,9 +32,10 @@ export default function BlockEditor() {
   useAuthManager();
   useBlockFocusEntry();
 
-  return isUserLoggedIn == false ? (
-    <AuthUI />
-  ) : (
+  // isUserLoggedIn == false ? (
+  //   <AuthUI />
+  // ) : (
+  return (
     <div className={blockEditorState === BlockEditorState.EDITING_BLOCKS ? "select-none" : ""}>
       <DocumentTabsBar />
 
@@ -53,6 +53,7 @@ export default function BlockEditor() {
       <CommandMenu />
     </div>
   );
+  // );
 }
 
 const useBlockFocusEntry = () => {
